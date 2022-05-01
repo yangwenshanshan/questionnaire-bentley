@@ -3,7 +3,7 @@
     <div class="result-top"></div>
     <div class="result-main">
       <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
-      <p>您的答卷已经提交，感谢您的参与！</p>
+      <p>{{msg[locale]}}</p>
     </div>
   </div>
 </template>
@@ -12,11 +12,19 @@
 export default {
   data () {
     return {
-      result: null
+      result: null,
+      locale: 'zh_CN',
+      msg: {
+        'zh_CN': '您的答卷已经提交，感谢您的参与！',
+        'zh_HK': '您的答卷已經提交，感謝您的參與！',
+        'en_US': 'Your answer sheet has been submitted. Thank you for your participation!'
+      }
     }
   },
   created () {
     let result = sessionStorage.getItem('_yws_result')
+    const { _locale } = this.$route.query
+    this.locale = _locale
     if (result) {
       this.result = JSON.parse(result)
       sessionStorage.removeItem('_yws_result')

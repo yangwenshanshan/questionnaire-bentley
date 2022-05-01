@@ -25,7 +25,7 @@
     </div>
     <div v-if="item.type === 'checkbox'">
       <van-checkbox-group @change="changeFill" v-model="item.checkbox" v-if="item.options && item.options.length">
-        <van-checkbox checked-color="rgba(0,50,32,.7)" v-for="row in item.options" :key="row.id" :name="row.id">{{row.title}}</van-checkbox>
+        <van-checkbox shape="square" checked-color="rgba(0,50,32,.7)" v-for="row in item.options" :key="row.id" :name="row.id">{{row.title}}</van-checkbox>
       </van-checkbox-group>
       <input @blur="onBlur" class="radio-input" v-if="checkBoxShowInput" v-model="item.text" type="text">
     </div>
