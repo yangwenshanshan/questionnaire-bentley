@@ -11,7 +11,6 @@
       >
         <template #reference>
           <img class="svg-language-icon" src="../../assets/language.png" alt="">
-          <!-- <van-button type="primary">浅色风格</van-button> -->
         </template>
       </van-popover>
     </div>
@@ -77,6 +76,21 @@ export default {
         'zh_CN': '提交',
         'zh_HK': '提交',
         'en_US': 'submit'
+      },
+      loadingText: {
+        'zh_CN': '加载中...',
+        'zh_HK': '加載中...',
+        'en_US': 'loading...'
+      },
+      languageChange: {
+        'zh_CN': '语言切换成功',
+        'zh_HK': '語言切換成功',
+        'en_US': 'Language switching succeeded'
+      },
+      checkUrlText: {
+        'zh_CN': '请检查连接',
+        'zh_HK': '請檢查連接',
+        'en_US': 'Please check url'
       }
     }
   },
@@ -100,7 +114,7 @@ export default {
       this.locale = _locale
     }
     if (!qId) {
-      Toast('请检查链接是否正确')
+      Toast(this.checkUrlText[this.locale])
       return false
     }
     this.qId = qId
@@ -147,7 +161,7 @@ export default {
     },
     getQuestion (params, changeFlag) {
       Toast.loading({
-        message: '加载中...',
+        message: this.loadingText[this.locale],
         overlay: true,
         forbidClick: true,
         loadingType: 'spinner',
@@ -160,7 +174,7 @@ export default {
           this.questionList = res.data.items
           this.page = 1
           if (changeFlag) {
-            Toast('语言已切换')
+            Toast(this.languageChange[this.locale])
           }
         }
       }).catch(() => {
@@ -216,7 +230,7 @@ export default {
       this.nextQuestion()
 
       Toast.loading({
-        message: '加载中...',
+        message: this.loadingText[this.locale],
         overlay: true,
         forbidClick: true,
         loadingType: 'spinner',
