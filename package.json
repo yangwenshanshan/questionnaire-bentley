@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:pd": "vite build --mode pd",
     "preview": "vite preview"
   },
   "dependencies": {

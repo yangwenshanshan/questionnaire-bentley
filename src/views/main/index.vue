@@ -16,10 +16,10 @@
     </div>
     <div class="main-title">{{questionData.title}}</div>
     <div v-for="item in list" :key="item.id">
-      <question ref="question" :item="item" :locale="locale"></question>
+      <question @saveAll="saveAll" ref="question" :item="item" :locale="locale"></question>
       <template v-if="item.optionId === item.radio && item.children && item.children.length">
         <div v-for="row in item.children" :key="row.id">
-          <question ref="subQuestion" :item="row" :locale="locale"></question>
+          <question @saveAll="saveAll" ref="subQuestion" :item="row" :locale="locale"></question>
         </div>
       </template>
     </div>
@@ -108,7 +108,6 @@ export default {
     }
   },
   mounted () {
-    const ywsQuestion = localStorage.getItem('_yws_question')
     const { _locale, qId } = this.$route.query
     if (_locale) {
       this.locale = _locale
@@ -118,14 +117,15 @@ export default {
       return false
     }
     this.qId = qId
+    const ywsQuestion = localStorage.getItem(`_yws_${this.qId}_question`)
     if (!ywsQuestion) {
-      this.getQuestion({ _locale: this.locale, qId })
+      this.getQuestion({ _locale: this.locale, qId: this.qId })
     } else {
       const { questionData, page, locale, time } = JSON.parse(ywsQuestion)
       let nowTime = new Date().getTime()
       if (nowTime > time + 60 * 30 * 1000 || locale !== this.locale) {
-        localStorage.removeItem('_yws_question')
-        this.getQuestion({ _locale: this.locale, qId })
+        localStorage.removeItem(`_yws_${this.qId}_question`)
+        this.getQuestion({ _locale: this.locale, qId: this.qId })
       } else {
         this.questionData = questionData
         this.questionList = questionData.items
@@ -133,21 +133,18 @@ export default {
         this.locale = locale
       }
     }
-
-    Toast.allowMultiple();
-
-    window.addEventListener('beforeunload', () => {
-      localStorage.setItem('_yws_question', JSON.stringify({
+  },
+  created () {
+  },
+  methods: {
+    saveAll () {
+      localStorage.setItem(`_yws_${this.qId}_question`, JSON.stringify({
         questionData: this.questionData,
         time: new Date().getTime(),
         locale: this.locale,
         page: this.page
       }))
-    })
-  },
-  created () {
-  },
-  methods: {
+    },
     popoverSelect (item) {
       this.locale = item.locale
       this.$router.replace({
