@@ -144,6 +144,7 @@ export default {
             this.page = page
             this.locale = locale
             this.actions = []
+            document.title = this.questionData.title
             questionData.locales.forEach(el => {
               const name = this.actionsLocales.find(item => item.locale === el)
               this.actions.push(name)
@@ -184,6 +185,7 @@ export default {
       api.getQuestion(params).then(res => {
         Toast.clear()
         if (res.code === 0 && res.data) {
+          document.title = res.data.title
           this.questionData = res.data
           this.questionList = res.data.items
           this.page = 1
