@@ -1,5 +1,5 @@
 <template>
-  <div class="main-page" v-if="questionData">
+  <div ref="mainPage" class="main-page" v-if="questionData">
     <div class="app-top">
       <img src="../../assets/bentley_logo.png" alt="">
       <van-popover
@@ -35,6 +35,7 @@
 import api from '@/common/api'
 import { Toast } from 'vant'
 import question from '../../components/question.vue'
+import qs from 'qs'
 
 export default {
   components: {
@@ -49,7 +50,8 @@ export default {
       items: [],
       showPopover: false,
       qId: 0,
-      actions: [{
+      actions: [],
+      actionsLocales: [{
         text: '简体中文',
         locale: 'zh_CN',
         className:"app-top-popover"
@@ -108,33 +110,48 @@ export default {
     }
   },
   mounted () {
-    const { _locale, qId } = this.$route.query
-    if (_locale) {
-      this.locale = _locale
-    }
-    if (!qId) {
-      Toast(this.checkUrlText[this.locale])
-      return false
-    }
-    this.qId = qId
-    const ywsQuestion = localStorage.getItem(`_yws_${this.qId}_question`)
-    if (!ywsQuestion) {
-      this.getQuestion({ _locale: this.locale, qId: this.qId })
-    } else {
-      const { questionData, page, locale, time } = JSON.parse(ywsQuestion)
-      let nowTime = new Date().getTime()
-      if (nowTime > time + 60 * 30 * 1000 || locale !== this.locale) {
+    api.checkQuestion(this.$route.query).then(res => {
+      if (res.code === 0 && res.data && res.data.done) {
+        sessionStorage.setItem('_yws_result', JSON.stringify(res))
         localStorage.removeItem(`_yws_${this.qId}_question`)
-        this.getQuestion({ _locale: this.locale, qId: this.qId })
+        this.$router.replace({
+          path: '/result',
+          query: this.$route.query
+        })
+        return false
       } else {
-        this.questionData = questionData
-        this.questionList = questionData.items
-        this.page = page
-        this.locale = locale
+        const { _locale, qId } = this.$route.query
+        if (_locale) {
+          this.locale = _locale
+        }
+        if (!qId) {
+          Toast(this.checkUrlText[this.locale])
+          return false
+        }
+        this.qId = qId
+        const ywsQuestion = localStorage.getItem(`_yws_${this.qId}_question`)
+        if (!ywsQuestion) {
+          this.getQuestion({ _locale: this.locale, qId: this.qId })
+        } else {
+          const { questionData, page, locale, time } = JSON.parse(ywsQuestion)
+          let nowTime = new Date().getTime()
+          if (nowTime > time + 60 * 30 * 1000 || locale !== this.locale) {
+            localStorage.removeItem(`_yws_${this.qId}_question`)
+            this.getQuestion({ _locale: this.locale, qId: this.qId })
+          } else {
+            this.questionData = questionData
+            this.questionList = questionData.items
+            this.page = page
+            this.locale = locale
+            this.actions = []
+            questionData.locales.forEach(el => {
+              const name = this.actionsLocales.find(item => item.locale === el)
+              this.actions.push(name)
+            })
+          }
+        }
       }
-    }
-  },
-  created () {
+    })
   },
   methods: {
     saveAll () {
@@ -170,6 +187,12 @@ export default {
           this.questionData = res.data
           this.questionList = res.data.items
           this.page = 1
+          const locales = res.data.locales
+          this.actions = []
+          locales.forEach(el => {
+            const name = this.actionsLocales.find(item => item.locale === el)
+            this.actions.push(name)
+          })
           if (changeFlag) {
             Toast(this.languageChange[this.locale])
           }
@@ -185,6 +208,9 @@ export default {
           let result = qv[i].checkFill()
           if (typeof result === 'boolean') {
             if (!result) {
+              const top = qv[i].$el.getBoundingClientRect().top
+              const scrollHeight = this.$refs.mainPage.scrollHeight - window.innerHeight
+              window.scrollTo(0, scrollHeight + top)
               return false
             }
           } else {
@@ -224,7 +250,7 @@ export default {
       this.page--
     },
     postQuestion () {
-      this.nextQuestion()
+      if (this.nextQuestion() === false) return false
 
       Toast.loading({
         message: this.loadingText[this.locale],
@@ -234,14 +260,16 @@ export default {
         duration: 0
       })
 
-      api.submitQuestion({
+      const params = qs.stringify(this.$route.query)
+      api.submitQuestion(params, {
         id: this.questionData.id,
         items: this.items,
-        _locale: this.locale
+        _locale: this.locale,
       }).then(res => {
         Toast.clear()
         if (res.code === 0) {
           sessionStorage.setItem('_yws_result', JSON.stringify(res))
+          localStorage.removeItem(`_yws_${this.qId}_question`)
           this.$router.replace({
             path: '/result',
             query: this.$route.query

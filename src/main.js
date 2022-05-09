@@ -5,6 +5,7 @@ import 'vant/lib/toast/index.less'
 import 'vant/lib/notify/index.less'
 import router from './router'
 import './common/reset.css'
+import './assets/fonts/fonts.css'
 
 new Vue({
   router,

@@ -1,9 +1,14 @@
 <template>
-  <div class="result-page">
+  <div class="result-page" v-if="result">
     <div class="result-top"></div>
-    <div class="result-main">
+    <div class="result-main" v-if="!result.data.score">
       <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
-      <p>{{msg[locale]}}</p>
+      <p>{{result.msg}}</p>
+    </div>
+    <div class="result-main" v-if="result.data.score">
+      <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
+      <p>{{result.msg}}</p>
+      <p>{{result.data.right}}/{{result.data.total}}</p>
     </div>
   </div>
 </template>
@@ -24,7 +29,9 @@ export default {
   created () {
     let result = sessionStorage.getItem('_yws_result')
     const { _locale } = this.$route.query
-    this.locale = _locale
+    if (_locale) {
+      this.locale = _locale
+    }
     if (result) {
       this.result = JSON.parse(result)
       sessionStorage.removeItem('_yws_result')

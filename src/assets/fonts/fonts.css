@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'Bentley';
+  src: url('Bentley-Regular.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'simhei';
+  src: url('simhei.ttf');
+  font-weight: normal;
+  font-style: normal;
+}

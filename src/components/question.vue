@@ -93,7 +93,7 @@ export default {
   watch: {
     'item.radio': function (val) {
       let item = this.item.options.find(item => item.id === val)
-      if (item.type === 'other') {
+      if (item && item.type === 'other') {
         this.radioShowInput = true
       } else {
         this.radioShowInput = false
@@ -191,12 +191,11 @@ export default {
             let text = options[i]['text' + (j + 1)]
             if (text) {
               value.push(text)
-            } else if (!this.item.required) {
-              value.push('')
-            } else {
-              this.isNotFilled = true
-              return false
             }
+          }
+          if (value.length < this.item.minLength) {
+            this.isNotFilled = true
+            return false
           }
           params.text.push({
             id: options[i].id,
