@@ -110,7 +110,10 @@ export default {
     }
   },
   mounted () {
-    api.checkQuestion(this.$route.query).then(res => {
+    api.checkQuestion({
+      _locale: this.locale,
+      ...this.$route.query
+    }).then(res => {
       if (res.code === 0 && res.data && res.data.done) {
         sessionStorage.setItem('_yws_result', JSON.stringify(res))
         localStorage.removeItem(`_yws_${this.qId}_question`)
@@ -182,7 +185,10 @@ export default {
         loadingType: 'spinner',
         duration: 0
       })
-      api.getQuestion(params).then(res => {
+      api.getQuestion({
+        ...this.$route.query,
+        ...params
+      }).then(res => {
         Toast.clear()
         if (res.code === 0 && res.data) {
           document.title = res.data.title

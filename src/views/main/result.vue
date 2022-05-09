@@ -1,19 +1,22 @@
 <template>
   <div class="result-page" v-if="result">
-    <div class="result-top"></div>
+    <div class="result-top" v-if="!result.data.score"></div>
     <div class="result-main" v-if="!result.data.score">
       <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
       <p>{{result.msg}}</p>
     </div>
     <div class="result-main" v-if="result.data.score">
-      <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
+      <!-- <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
       <p>{{result.msg}}</p>
-      <p>{{result.data.right}}/{{result.data.total}}</p>
+      <p>{{result.data.right}}/{{result.data.total}}</p> -->
+      1234
     </div>
   </div>
 </template>
 
 <script>
+import api from '@/common/api'
+
 export default {
   data () {
     return {
@@ -35,10 +38,23 @@ export default {
     if (result) {
       this.result = JSON.parse(result)
       sessionStorage.removeItem('_yws_result')
+      if (this.result.data.score) {
+        this.getQuestionHistory()
+      }
     } else {
       this.$router.replace({
         path: '/',
         query: this.$route.query
+      })
+    }
+  },
+  methods: {
+    getQuestionHistory () {
+      api.getQuestionHistory({
+        _locale: this.locale,
+        ...this.$route.query
+      }).then(res => {
+        console.log(res)
       })
     }
   }
