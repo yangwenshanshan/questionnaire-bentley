@@ -110,6 +110,26 @@ export default {
       this.checkBoxShowInput = false
     },
   },
+  mounted () {
+    if (this.item.type === 'radio') {
+      let item = this.item.options.find(it => it.id === this.item.radio)
+      if (item && item.type === 'other') {
+        this.radioShowInput = true
+      } else {
+        this.radioShowInput = false
+      }
+    }
+    if (this.item.type === 'checkbox' && this.item.checkbox.length) {
+      for (let i = 0; i < this.item.checkbox.length; i++) {
+        let item = this.item.options.find(item => item.id === this.item.checkbox[i])
+        if (item.type === 'other') {
+          this.checkBoxShowInput = true
+          return false
+        }
+      }
+      this.checkBoxShowInput = false
+    }
+  },
   methods: {
     onBlur () {
       this.$emit('saveAll')

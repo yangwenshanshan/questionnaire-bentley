@@ -4,16 +4,12 @@
     <div class="result-main">
       <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
       <p>{{result.msg}}</p>
+      <p v-if="result.data.score">{{result.data.right}}/{{result.data.total}}</p>
     </div>
     <div class="result-top"></div>
     <div class="result-main" style="padding:0" v-if="result.data.score">
       <van-button color="rgba(0,50,32,.7)" type="primary" block @click="goAnswer">{{nextPage[locale]}}</van-button>
     </div>
-    <!-- <div class="result-main" v-if="result.data.score">
-      <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
-      <p>{{result.msg}}</p>
-      <p>{{result.data.right}}/{{result.data.total}}</p>
-    </div> -->
   </div>
 </template>
 

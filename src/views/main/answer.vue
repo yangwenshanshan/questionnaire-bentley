@@ -5,28 +5,31 @@
       <div class="answer-item" v-for="item in answer">
         <p class="q-title"><span v-if="item.required" style="color:red">*</span>{{item.title}}<span>{{typeList[item.type][locale]}}</span></p>
         <div v-if="item.type === 'text'">
-          <!-- <div class="q-o-children" v-if="item.options && item.options.length">
+          <div class="q-o-children" v-if="item.options && item.options.length">
             <div class="c-item" v-for="row in item.options" :key="row.id">
               <p class="c-item-title">{{row.title}}</p>
               <div class="c-input-list">
                 <div class="input-main" v-for="it in row.length" :key="it">
-                  <span class="input-title">{{it}}.</span>
-                  <input @blur="onBlur" @input="inputFill" class="c-item-input" type="text" v-model="row['text' + it]">
+                  <span class="input-title">{{it}}.{{row.text[it - 1]}}</span>
                 </div>
               </div>
             </div>
           </div>
           <div v-else>
-            <textarea @blur="onBlur" @input="inputFill" rows="3" class="textarea" v-model="item.text"></textarea>
-          </div> -->
+            <p class="disable-span">{{item.text}}</p>
+          </div>
         </div>
         <div v-if="item.type === 'radio'">
-          <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="round" v-model="row.checked" checked-color="rgba(0,50,32,.7)" v-for="row in item.options" :key="row.id" :name="row.id">{{row.title}}</van-checkbox>
-          <!-- <input @blur="onBlur" class="radio-input" v-if="radioShowInput" v-model="item.text" type="text"> -->
+          <div v-for="row in item.options" :key="row.id">
+            <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="round" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
+            <p class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
+          </div>
         </div>
         <div v-if="item.type === 'checkbox'">
-          <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="square" v-model="row.checked" checked-color="rgba(0,50,32,.7)" v-for="row in item.options" :key="row.id" :name="row.id">{{row.title}}</van-checkbox>
-          <!-- <input @blur="onBlur" class="radio-input" v-if="checkBoxShowInput" v-model="item.text" type="text"> -->
+          <div v-for="row in item.options" :key="row.id">
+            <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="square" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
+            <p class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -150,8 +153,8 @@ export default {
           padding: 18px 16px 8px 16px;
           .input-main{
             display: flex;
-            justify-content: center;
-            align-items: center;
+            // justify-content: center;
+            // align-items: center;
             margin-bottom: 10px;
             .input-title{
               font-size: 16px;
@@ -227,6 +230,12 @@ export default {
     .van-checkbox__label--disabled{
       color: #ee0a24;
     }
+  }
+  .disable-span{
+    font-size: 16px;
+    color: #c8c9cc;
+    text-indent: 2em;
+    margin: 0;
   }
 }
 </style>
