@@ -1,16 +1,19 @@
 <template>
   <div class="result-page" v-if="result">
-    <div class="result-top" v-if="!result.data.score"></div>
-    <div class="result-main" v-if="!result.data.score">
+    <div class="result-top"></div>
+    <div class="result-main">
       <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
       <p>{{result.msg}}</p>
     </div>
-    <div class="result-main" v-if="result.data.score">
-      <!-- <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
-      <p>{{result.msg}}</p>
-      <p>{{result.data.right}}/{{result.data.total}}</p> -->
-      1234
+    <div class="result-top"></div>
+    <div class="result-main" style="padding:0" v-if="result.data.score">
+      <van-button color="rgba(0,50,32,.7)" type="primary" block @click="goAnswer">{{nextPage[locale]}}</van-button>
     </div>
+    <!-- <div class="result-main" v-if="result.data.score">
+      <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
+      <p>{{result.msg}}</p>
+      <p>{{result.data.right}}/{{result.data.total}}</p>
+    </div> -->
   </div>
 </template>
 
@@ -26,7 +29,12 @@ export default {
         'zh_CN': '您的答卷已经提交，感谢您的参与！',
         'zh_HK': '您的答卷已經提交，感謝您的參與！',
         'en_US': 'Your answer sheet has been submitted. Thank you for your participation!'
-      }
+      },
+      nextPage: {
+        'zh_CN': '我的问卷',
+        'zh_HK': '我的問卷',
+        'en_US': 'my questionnaire'
+      },
     }
   },
   created () {
@@ -37,10 +45,11 @@ export default {
     }
     if (result) {
       this.result = JSON.parse(result)
+      document.title = this.result.data.title
       sessionStorage.removeItem('_yws_result')
-      if (this.result.data.score) {
-        this.getQuestionHistory()
-      }
+      // if (this.result.data.score) {
+      //   this.getQuestionHistory()
+      // }
     } else {
       this.$router.replace({
         path: '/',
@@ -49,14 +58,20 @@ export default {
     }
   },
   methods: {
-    getQuestionHistory () {
-      api.getQuestionHistory({
-        _locale: this.locale,
-        ...this.$route.query
-      }).then(res => {
-        console.log(res)
+    goAnswer () {
+      this.$router.push({
+        path: '/answer',
+        query: this.$route.query
       })
     }
+    // getQuestionHistory () {
+    //   api.getQuestionHistory({
+    //     _locale: this.locale,
+    //     ...this.$route.query
+    //   }).then(res => {
+    //     console.log(res)
+    //   })
+    // }
   }
 }
 </script>

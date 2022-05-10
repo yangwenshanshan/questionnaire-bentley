@@ -78,9 +78,9 @@ export default {
           'en_US': '(Multiple choice)'
         },
         'radio': {
-          'zh_CN': '',
-          'zh_HK': '',
-          'en_US': ''
+          'zh_CN': '(单选题)',
+          'zh_HK': '(單選題)',
+          'en_US': '(Single choice)'
         },
         'text': {
           'zh_CN': '',

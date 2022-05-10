@@ -16,6 +16,10 @@ const router = new Router({
     path: '/result',
     name: 'result',
     component: () => import('@/views/main/result.vue')
+  }, {
+    path: '/answer',
+    name: 'answer',
+    component: () => import('@/views/main/answer.vue')
   }]
 });
 
