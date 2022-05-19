@@ -14,7 +14,10 @@
         </template>
       </van-popover>
     </div>
-    <div class="main-title">{{questionData.title}}</div>
+    <div class="banner-img" v-if="questionData.cover">
+      <img :src="questionData.cover" alt="">
+    </div>
+    <div class="main-title">{{questionData.shortTitle}}</div>
     <div v-for="item in list" :key="item.id">
       <question @saveAll="saveAll" ref="question" :item="item" :locale="locale"></question>
       <template v-if="item.optionId === item.radio && item.children && item.children.length">
@@ -295,13 +298,13 @@ export default {
 .main-page {
   .main-title{
     background-color: rgba(255,255,255,0.9);
-    padding: 26px 10px 20px 10px;
+    padding: 10px 10px 20px 10px;
     width: 100%;
     color: rgba(0,50,32,.7);
     line-height: 32px;
     font-weight: bold;
     text-align: center;
-    font-size: 20px;
+    font-size: 18px;
   }
   .footer-btns{
     padding: 10px 20px;
@@ -326,6 +329,13 @@ export default {
       width: 20px;
       height: 20px;
       margin: 0;
+    }
+  }
+  .banner-img{
+    width: 100%;
+    img{
+      width: 100%;
+      height: auto;
     }
   }
 }

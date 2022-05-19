@@ -1,21 +1,26 @@
 <template>
   <div class="result-page" v-if="result">
-    <div class="result-top"></div>
+    <!-- <div class="result-top"></div> -->
+    <div class="app-top">
+      <img src="../../assets/bentley_logo.png" alt="">
+    </div>
+    <div class="banner-img" v-if="result.data.cover">
+      <img :src="result.data.cover" alt="">
+    </div>
+    <!-- <div class="main-title">{{result.data.shortTitle}}</div> -->
     <div class="result-main">
       <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
       <p>{{result.msg}}</p>
       <p v-if="result.data.score">{{result.data.right}}/{{result.data.total}}</p>
     </div>
     <div class="result-top"></div>
-    <div class="result-main" style="padding:0" v-if="result.data.score">
-      <van-button color="rgba(0,50,32,.7)" type="primary" block @click="goAnswer">{{nextPage[locale]}}</van-button>
+    <div class="result-main" style="padding:0" v-if="result.data.done">
+      <van-button color="rgba(0,50,32,.7)" type="primary" block @click="goAnswer">{{result.data.shortTitle}}{{nextPage[locale]}}</van-button>
     </div>
   </div>
 </template>
 
 <script>
-import api from '@/common/api'
-
 export default {
   data () {
     return {
@@ -27,9 +32,9 @@ export default {
         'en_US': 'Your answer sheet has been submitted. Thank you for your participation!'
       },
       nextPage: {
-        'zh_CN': '我的问卷',
-        'zh_HK': '我的問卷',
-        'en_US': 'my questionnaire'
+        'zh_CN': '回顾',
+        'zh_HK': '回顧',
+        'en_US': 'review'
       },
     }
   },
@@ -76,6 +81,40 @@ export default {
 .result-page{
   min-height: 100vh;
   background: #f4f5f5;
+  .main-title{
+    background-color: rgba(255,255,255,0.9);
+    padding: 10px 10px 20px 10px;
+    width: 100%;
+    color: rgba(0,50,32,.7);
+    line-height: 32px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 20px;
+    margin: 0 14px;
+  }
+  .app-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 40px;
+    img{
+      width: 22.4vw;
+      height: 11.2vw;
+      margin: 5.333vw;
+    }
+    .svg-language-icon{
+      width: 20px;
+      height: 20px;
+      margin: 0;
+    }
+  }
+  .banner-img{
+    width: 100%;
+    img{
+      width: 100%;
+      height: auto;
+    }
+  }
   .result-top{
     height: 38px;
   }
@@ -86,6 +125,7 @@ export default {
     background: #fff;
     font-size: 16px;
     color: #333;
+    margin-top: 30px;
     .success-icon{
       margin-bottom: 18px;
     }

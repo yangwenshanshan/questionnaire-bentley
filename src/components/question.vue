@@ -119,7 +119,7 @@ export default {
         this.radioShowInput = false
       }
     }
-    if (this.item.type === 'checkbox' && this.item.checkbox.length) {
+    if (this.item.type === 'checkbox' && this.item.checkbox && this.item.checkbox.length) {
       for (let i = 0; i < this.item.checkbox.length; i++) {
         let item = this.item.options.find(item => item.id === this.item.checkbox[i])
         if (item.type === 'other') {
@@ -143,8 +143,16 @@ export default {
     },
     checkFill () {
       let params = {}
+      const radioItem = this.item.options.find(item => item.id === this.item.radio)
       if (this.item.type === 'radio') {
-        if (this.item.radio) {
+        if (this.item.radio && radioItem.type !== 'other') {
+          params.id = this.item.id
+          params.type = 'radio'
+          params.radio = this.item.radio
+          params.text = this.item.text ? this.item.text : ''
+          this.isNotFilled = false
+          return params
+        } else if (this.item.radio && radioItem.type === 'other' && this.item.text) {
           params.id = this.item.id
           params.type = 'radio'
           params.radio = this.item.radio

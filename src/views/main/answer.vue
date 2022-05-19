@@ -1,6 +1,12 @@
 <template>
   <div class="answer-page" v-if="answerData">
-    <div class="main-title">{{answerData.title}}</div>
+    <div class="app-top">
+      <img src="../../assets/bentley_logo.png" alt="">
+    </div>
+    <div class="banner-img" v-if="answerData.cover">
+      <img :src="answerData.cover" alt="">
+    </div>
+    <div class="main-title">{{answerData.shortTitle}}</div>
     <div class="answer-list">
       <div class="answer-item" v-for="item in answer">
         <p class="q-title"><span v-if="item.required" style="color:red">*</span>{{item.title}}<span>{{typeList[item.type][locale]}}</span></p>
@@ -112,13 +118,13 @@ export default {
   background: #fff;
   .main-title{
     background-color: rgba(255,255,255,0.9);
-    padding: 26px 10px 20px 10px;
+    padding: 10px 10px 20px 10px;
     width: 100%;
     color: rgba(0,50,32,.7);
     line-height: 32px;
     font-weight: bold;
     text-align: center;
-    font-size: 20px;
+    font-size: 18px;
   }
   .answer-item{
     padding: 10px 20px;
@@ -236,6 +242,29 @@ export default {
     color: #c8c9cc;
     text-indent: 2em;
     margin: 0;
+  }
+  .banner-img{
+    width: 100%;
+    img{
+      width: 100%;
+      height: auto;
+    }
+  }
+  .app-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 40px;
+    img{
+      width: 22.4vw;
+      height: 11.2vw;
+      margin: 5.333vw;
+    }
+    .svg-language-icon{
+      width: 20px;
+      height: 20px;
+      margin: 0;
+    }
   }
 }
 </style>

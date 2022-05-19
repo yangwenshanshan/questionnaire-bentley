@@ -25,13 +25,13 @@ export default defineConfig({
   base: './',
   server: {
     host: '0.0.0.0',
-    // proxy: {
-    //   '/api': {
-    //     target: 'http://test.api.bentley.levsoft.cn',
-    //     changeOrigin: true,
-    //     rewrite: (path) => path.replace(/^\/api\//, ''),
-    //   }
-    // }
+    proxy: {
+      '/api': {
+        target: 'http://test.api.bentley.levsoft.cn',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\//, ''),
+      }
+    }
   },
   resolve: {
     alias: [
