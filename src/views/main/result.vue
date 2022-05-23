@@ -98,9 +98,9 @@ export default {
     align-items: center;
     padding-right: 40px;
     img{
-      width: 22.4vw;
-      height: 11.2vw;
-      margin: 5.333vw;
+      width: 84px;
+      height: 42px;
+      margin: 20px;
     }
     .svg-language-icon{
       width: 20px;
