@@ -2,7 +2,7 @@
   <div ref="mainPage" class="main-page" v-if="questionData">
     <div class="app-top">
       <img src="../../assets/bentley_logo.png" alt="">
-      <van-popover
+      <!-- <van-popover
         v-model="showPopover"
         trigger="click"
         :actions="actions"
@@ -12,7 +12,7 @@
         <template #reference>
           <img class="svg-language-icon" src="../../assets/language.png" alt="">
         </template>
-      </van-popover>
+      </van-popover> -->
     </div>
     <div class="banner-img" v-if="questionData.cover">
       <img :src="questionData.cover" alt="">
