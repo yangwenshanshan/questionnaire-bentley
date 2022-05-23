@@ -9,10 +9,12 @@
 .app-page{
   font-family: Bentley,simhei,RegularEng,Helvetica,Avenir,Arial,sans-serif;
   background: #f5f5f5;
+  min-height: 100vh;
   .app-main{
-    max-width: 600px;
+    max-width: 500px;
     margin: 0 auto;
     background: #fff;
+    min-height: 100vh;
   }
 }
 </style>
