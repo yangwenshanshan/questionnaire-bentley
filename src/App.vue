@@ -11,7 +11,7 @@
   background: #f5f5f5;
   min-height: 100vh;
   .app-main{
-    max-width: 500px;
+    max-width: 650px;
     margin: 0 auto;
     background: #fff;
     min-height: 100vh;

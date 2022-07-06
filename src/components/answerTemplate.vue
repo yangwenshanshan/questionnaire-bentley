@@ -1,68 +1,66 @@
 <template>
-  <div class="answer-page" v-if="answerData">
-    <div class="app-top">
-      <img src="../../assets/bentley_logo.png" alt="">
-    </div>
-    <div class="banner-img" v-if="answerData.cover">
-      <img :src="answerData.cover" alt="">
-    </div>
-    <div class="main-title">{{answerData.shortTitle}}</div>
-    <div class="answer-list">
-      <div v-for="item in answer">
-        <answerTemplate :item="item" :type="answerData.type"></answerTemplate>
-        <template v-if="item.children && item.children.length">
-          <div v-for="row in item.children" :key="row.id">
-            <answerTemplate :item="row" :type="answerData.type"></answerTemplate>
-            <template v-if="row.children && row.children.length">
-              <div v-for="it in row.children" :key="it.id">
-                <answerTemplate :item="it" :type="answerData.type"></answerTemplate>
-              </div>
-            </template>
-          </div>
-        </template>
-      </div>
-      <!-- <div class="answer-item" >
-        <p class="q-title"><span v-if="item.required" style="color:red">*</span>{{item.title}}<span>{{typeList[item.type][locale]}}</span></p>
-        <div v-if="item.type === 'text'">
-          <div class="q-o-children" v-if="item.options && item.options.length">
-            <div class="c-item" v-for="row in item.options" :key="row.id">
-              <p class="c-item-title">{{row.title}}</p>
-              <div class="c-input-list">
-                <div class="input-main" v-for="it in row.length" :key="it">
-                  <span class="input-title">{{it}}.{{row.text[it - 1]}}</span>
-                </div>
-              </div>
+  <div class="answer-item" v-if="item">
+    <p class="q-title"><span v-if="item.required" style="color:red">*</span>{{item.title}}<span v-if="type !== false">{{typeList[item.type][locale]}}</span></p>
+    <div v-if="item.type === 'text'">
+      <div class="q-o-children" v-if="item.options && item.options.length">
+        <div class="c-item" v-for="row in item.options" :key="row.id">
+          <p class="c-item-title">{{row.title}}</p>
+          <div class="c-input-list">
+            <div class="input-main" v-for="it in row.length" :key="it">
+              <span class="input-title">{{it}}.{{row.text[it - 1]}}</span>
             </div>
           </div>
-          <div v-else>
-            <p class="disable-span">{{item.text}}</p>
-          </div>
         </div>
-        <div v-if="item.type === 'radio'">
-          <div v-for="row in item.options" :key="row.id">
-            <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="round" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
-            <p class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
-          </div>
-        </div>
-        <div v-if="item.type === 'checkbox'">
-          <div v-for="row in item.options" :key="row.id">
-            <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="square" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
-            <p class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
-          </div>
-        </div>
-      </div> -->
+      </div>
+      <div v-else>
+        <p class="disable-span">{{item.text}}</p>
+      </div>
     </div>
-      <!-- answer -->
+    <div v-if="item.type === 'radio'">
+      <div v-for="row in item.options" :key="row.id">
+        <div v-if="row.img && row.img.length > 0">
+          <van-swipe class="my-swipe" :autoplay="2000">
+            <van-swipe-item v-for="(imgUrl, index) in row.img" :key="index">
+              <img  class="img-style" :src="imgUrl" alt="" />
+            </van-swipe-item>
+          </van-swipe>
+          <!-- <img v-for="imgUrl in row.img" class="img-style" :src="imgUrl" alt=""> -->
+          <!-- <img class="img-style" v-if="row.img" :src="row.img" alt=""> -->
+        </div>
+        <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="round" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">
+          <span class="title">{{row.title}}</span>
+          <br/>
+          <span class="sub-title">{{row.subTitle}}</span>
+        </van-checkbox>
+        <p class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
+      </div>
+    </div>
+    <div v-if="item.type === 'checkbox'">
+      <div v-for="row in item.options" :key="row.id">
+        <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="square" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">
+          <span class="title">{{row.title}}</span>
+          <br/>
+          <span class="sub-title">{{row.subTitle}}</span>
+        </van-checkbox>
+        <p class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import api from '@/common/api'
-import answerTemplate from '../../components/answerTemplate.vue'
 
 export default {
-  components: {
-    answerTemplate
+  props: {
+    item: {
+      type: Object,
+      default: () => null
+    },
+    type: {
+      type: Boolean,
+      default: () => true
+    }
   },
   data () {
     return {
@@ -95,36 +93,8 @@ export default {
     }
   },
   created () {
-    this.getQuestionHistory()
   },
   methods: {
-    getQuestionHistory () {
-      api.getQuestionHistory({
-        _locale: this.locale,
-        ...this.$route.query
-      }).then(res => {
-        if (res.code === 0) {
-          this.answerData = res.data
-          document.title = res.data.title
-          this.answer = []
-          res.data.items.forEach(el => {
-            if (el.type === 'radio') {
-              el.options.forEach((row => {
-                if (row.checked) {
-                  row.radioChecked = row.id
-                }
-              }))
-            }
-            this.answer.push(el)
-          });
-        } else {
-          this.$router.replace({
-            path: '/',
-            query: this.$route.query
-          })
-        }
-      })
-    }
   }
 }
 </script>
@@ -281,6 +251,23 @@ export default {
       width: 20px;
       height: 20px;
       margin: 0;
+    }
+  }
+  .sub-title{
+    margin: 0;
+    padding: 0;
+  }
+  .title{
+    margin: 0;
+    padding: 0;
+  }
+  .my-swipe{
+    width: 260px;
+    .img-style{
+      display: block;
+      width: 260px;
+      height: auto;
+      margin-bottom: 10px;
     }
   }
 }

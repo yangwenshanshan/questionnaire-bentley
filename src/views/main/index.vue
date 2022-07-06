@@ -19,10 +19,15 @@
     </div>
     <div class="main-title">{{questionData.shortTitle}}</div>
     <div v-for="item in list" :key="item.id">
-      <question @saveAll="saveAll" ref="question" :item="item" :locale="locale"></question>
+      <question @saveAll="saveAll" ref="question" :item="item" :locale="locale" :type="questionData.type"></question>
       <template v-if="item.optionId === item.radio && item.children && item.children.length">
         <div v-for="row in item.children" :key="row.id">
-          <question @saveAll="saveAll" ref="subQuestion" :item="row" :locale="locale"></question>
+          <question @saveAll="saveAll" ref="subQuestion" :item="row" :locale="locale" :type="questionData.type"></question>
+          <template v-if="row.optionId === row.radio && row.children && row.children.length">
+            <div v-for="it in row.children" :key="it.id">
+              <question @saveAll="saveAll" ref="trQuestion" :item="it" :locale="locale" :type="questionData.type"></question>
+            </div>
+          </template>
         </div>
       </template>
     </div>
@@ -151,6 +156,26 @@ export default {
             this.locale = locale
             this.actions = []
             document.title = this.questionData.title
+            this.items = []
+            for (let i = 0; i <= this.questionList.length; i++) {
+              if (this.questionList[i]) {
+                const items = this.checkFill(this.questionList[i])
+                if (items) {
+                  this.items.push(items)
+                }
+                if (this.questionList[i].children && this.questionList[i].children.length > 0) {
+                  for (let j = 0; j < this.questionList[i].children.length; j++) {
+                    const it = this.questionList[i].children[j]
+                    if (it) {
+                      const row = this.checkFill(it)
+                      if (row) {
+                        this.items.push(row)
+                      }
+                    }
+                  }
+                }
+              }
+            }
             questionData.locales.forEach(el => {
               const name = this.actionsLocales.find(item => item.locale === el)
               this.actions.push(name)
@@ -234,6 +259,7 @@ export default {
     nextQuestion () {
       let qVues = this.$refs.question
       let subQVues = this.$refs.subQuestion
+      let trVues = this.$refs.trQuestion
       let items = []
 
       let result1 = this.initParams(qVues)
@@ -246,6 +272,13 @@ export default {
       let result2 = this.initParams(subQVues)
       if (result2) {
         items.push(...result2)
+      } else {
+        return false
+      }
+
+      let result3 = this.initParams(trVues)
+      if (result3) {
+        items.push(...result3)
       } else {
         return false
       }
@@ -263,6 +296,15 @@ export default {
     postQuestion () {
       if (this.nextQuestion() === false) return false
 
+      let tempItem = {}
+      this.items.forEach(el => {
+        tempItem[el.id] = el
+      })
+
+      this.items = []
+      for (let i in tempItem) {
+        this.items.push(tempItem[i])
+      }
       Toast.loading({
         message: this.loadingText[this.locale],
         overlay: true,
@@ -289,6 +331,88 @@ export default {
       }).catch(() => {
         Toast.clear()
       })
+    },
+    checkFill (item) {
+      let params = {}
+      if (item.type === 'radio') {
+        const radioItem = item.options.find(it => it.id === item.radio)
+        if (item.radio && radioItem.type !== 'other') {
+          params.id = item.id
+          params.type = 'radio'
+          params.radio = item.radio
+          params.text = item.text ? item.text : ''
+          return params
+        } else if (item.radio && radioItem.type === 'other' && item.text) {
+          params.id = item.id
+          params.type = 'radio'
+          params.radio = item.radio
+          params.text = item.text ? item.text : ''
+          return params
+        } else if (!item.required) {
+          params.id = item.id
+          params.type = 'radio'
+          params.radio = ''
+          params.text = ''
+          return params
+        } else {
+          return false
+        }
+      }
+      if (item.type === 'checkbox') {
+        if (item.checkbox && item.checkbox.length) {
+          params.id = item.id
+          params.checkbox = item.checkbox,
+          params.type = 'checkbox'
+          params.text = item.text ? item.text : ''
+          return params
+        } else if (!item.required) {
+          params.id = item.id
+          params.checkbox = ''
+          params.type = 'checkbox'
+          return params
+        } else {
+          return false
+        }
+      }
+      if (item.type === 'text' && (!item.options || item.options.length <= 0)) {
+        if (item.text) {
+          params.id = item.id
+          params.text = item.text,
+          params.type = 'text'
+          return params
+        } else if (!item.required) {
+          params.id = item.id
+          params.text = ''
+          params.type = 'text'
+          return params
+        } else {
+          return false
+        }
+      }
+      if (item.type === 'text' && item.options && item.options.length > 0) {
+        params.id = item.id
+        params.type = 'text'
+        params.text = []
+        let options = item.options
+        for (let i = 0; i < options.length; i++) {
+          let value = []
+          for (let j = 0; j < options[i].length; j++) {
+            let text = options[i]['text' + (j + 1)]
+            if (text) {
+              value.push(text)
+            }
+          }
+          if (value.length < item.minLength) {
+            return false
+          }
+          params.text.push({
+            id: options[i].id,
+            value: value
+          })
+        }
+        return params
+      }
+      return true
     }
   }
 }

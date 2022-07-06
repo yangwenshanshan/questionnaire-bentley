@@ -1,6 +1,6 @@
 <template>
   <div class="main-body" :class="isNotFilled ? 'not-filled' : ''" v-if="item">
-    <p class="q-title"><span v-if="item.required" style="color:red">*</span>{{item.title}}<span>{{typeList[item.type][locale]}}</span></p>
+    <p class="q-title"><span v-if="item.required" style="color:red">*</span>{{item.title}}<span v-if="type !== false">{{typeList[item.type][locale]}}</span></p>
     <div v-if="item.type === 'text'">
       <div class="q-o-children" v-if="item.options && item.options.length">
         <div class="c-item" v-for="row in item.options" :key="row.id">
@@ -19,13 +19,30 @@
     </div>
     <div v-if="item.type === 'radio'">
       <van-radio-group @change="changeFill" v-model="item.radio" v-if="item.options && item.options.length">
-        <van-radio checked-color="rgba(0,50,32,.7)" v-for="row in item.options" :key="row.id" :name="row.id">{{row.title}}</van-radio>
+        <div v-for="row in item.options" :key="row.id">
+          <div v-if="row.img && row.img.length > 0">
+          <van-swipe class="my-swipe">
+            <van-swipe-item v-for="(imgUrl, index) in row.img" :key="index">
+              <img  class="img-style" :src="imgUrl" alt="" />
+            </van-swipe-item>
+          </van-swipe>
+          </div>
+          <van-radio checked-color="rgba(0,50,32,.7)"  :name="row.id">
+            <span class="title">{{row.title}}</span>
+            <br/>
+            <span class="sub-title">{{row.subTitle}}</span>
+          </van-radio>
+        </div>
       </van-radio-group>
       <input @blur="onBlur" class="radio-input" v-if="radioShowInput" v-model="item.text" type="text">
     </div>
     <div v-if="item.type === 'checkbox'">
       <van-checkbox-group @change="changeFill" v-model="item.checkbox" v-if="item.options && item.options.length">
-        <van-checkbox shape="square" checked-color="rgba(0,50,32,.7)" v-for="row in item.options" :key="row.id" :name="row.id">{{row.title}}</van-checkbox>
+        <van-checkbox shape="square" checked-color="rgba(0,50,32,.7)" v-for="row in item.options" :key="row.id" :name="row.id">
+          <span class="title">{{row.title}}</span>
+          <br/>
+          <span class="sub-title">{{row.subTitle}}</span>
+        </van-checkbox>
       </van-checkbox-group>
       <input @blur="onBlur" class="radio-input" v-if="checkBoxShowInput" v-model="item.text" type="text">
     </div>
@@ -37,6 +54,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'question',
   props: {
@@ -47,6 +65,10 @@ export default {
     locale: {
       type: String,
       default: ''
+    },
+    type: {
+      type: Boolean,
+      default: () => true
     }
   },
   data () {
@@ -143,8 +165,8 @@ export default {
     },
     checkFill () {
       let params = {}
-      const radioItem = this.item.options.find(item => item.id === this.item.radio)
       if (this.item.type === 'radio') {
+        const radioItem = this.item.options.find(item => item.id === this.item.radio)
         if (this.item.radio && radioItem.type !== 'other') {
           params.id = this.item.id
           params.type = 'radio'
@@ -343,6 +365,23 @@ export default {
     margin: 0;
     resize: none;
     border: 1px solid #ebebeb;
+  }
+  .my-swipe{
+    width: 260px;
+    .img-style{
+      display: block;
+      width: 260px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+  }
+  .sub-title{
+    margin: 0;
+    padding: 0;
+  }
+  .title{
+    margin: 0;
+    padding: 0;
   }
 }
 .not-filled{

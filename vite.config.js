@@ -7,6 +7,7 @@ import { resolve } from 'path'
 import Components from 'unplugin-vue-components/vite'
 import { VantResolver } from 'unplugin-vue-components/resolvers'
 import pxtorem from 'postcss-pxtorem'
+import legacy from '@vitejs/plugin-legacy'
 
 export default defineConfig({
   plugins: [
@@ -18,6 +19,9 @@ export default defineConfig({
     // AutoImport({
     //   resolvers: [VantResolver()],
     // }),
+    legacy({
+      targets: ['defaults']
+    }),
     Components({
       resolvers: [VantResolver()],
     })
