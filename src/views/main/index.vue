@@ -1,6 +1,6 @@
 <template>
-  <div ref="mainPage" class="main-page" v-if="questionData">
-    <div class="app-top">
+  <div ref="mainPage" class="main-page" :style="questionData && questionData.css && questionData.css.backgroundColor ? 'background:' + questionData.css.backgroundColor : ''" v-if="questionData">
+    <div class="app-top" v-if="!questionData.css || !questionData.css.backgroundImage">
       <img src="../../assets/bentley_logo.png" alt="">
       <!-- <van-popover
         v-model="showPopover"
@@ -14,27 +14,28 @@
         </template>
       </van-popover> -->
     </div>
-    <div class="banner-img" v-if="questionData.cover">
-      <img :src="questionData.cover" alt="">
+    <div class="banner-img" v-if="questionData.cover || (questionData.css && questionData.css.backgroundImage)">
+      <img v-if="questionData.css && questionData.css.backgroundImage" :src="questionData.css.backgroundImage" alt="">
+      <img v-else :src="questionData.cover" alt="">
     </div>
-    <div class="main-title">{{questionData.shortTitle}}</div>
+    <div class="main-title" :style="questionData && questionData.css && questionData.css.titleColor ? 'color:' + questionData.css.titleColor : ''">{{questionData.shortTitle}}</div>
     <div v-for="item in list" :key="item.id">
-      <question @saveAll="saveAll" ref="question" :item="item" :locale="locale" :type="questionData.type"></question>
+      <question @saveAll="saveAll" ref="question" :item="item" :locale="locale" :type="questionData.type" :css="questionData.css"></question>
       <template v-if="item.optionId === item.radio && item.children && item.children.length">
         <div v-for="row in item.children" :key="row.id">
-          <question @saveAll="saveAll" ref="subQuestion" :item="row" :locale="locale" :type="questionData.type"></question>
+          <question @saveAll="saveAll" ref="subQuestion" :item="row" :locale="locale" :type="questionData.type" :css="questionData.css"></question>
           <template v-if="row.optionId === row.radio && row.children && row.children.length">
             <div v-for="it in row.children" :key="it.id">
-              <question @saveAll="saveAll" ref="trQuestion" :item="it" :locale="locale" :type="questionData.type"></question>
+              <question @saveAll="saveAll" ref="trQuestion" :item="it" :locale="locale" :type="questionData.type" :css="questionData.css"></question>
             </div>
           </template>
         </div>
       </template>
     </div>
     <div class="footer-btns" >
-      <van-button v-if="page > 1" class="btn-item" color="rgba(0,50,32,.7)" plain block @click="lastQuestion">{{previousPage[locale]}}</van-button>
-      <van-button v-if="!isEnd" color="rgba(0,50,32,.7)" type="primary" block @click="nextQuestion">{{nextPage[locale]}}</van-button>
-      <van-button v-if="isEnd" color="rgba(0,50,32,.7)" type="primary" block @click="postQuestion">{{submit[locale]}}</van-button>
+      <van-button v-if="page > 1" class="btn-item" :color="questionData && questionData.css && questionData.css.titleColor ? questionData.css.titleColor : 'rgba(0,50,32,.7)'" plain block @click="lastQuestion">{{previousPage[locale]}}</van-button>
+      <van-button v-if="!isEnd" :color="questionData && questionData.css && questionData.css.titleColor ? questionData.css.titleColor : 'rgba(0,50,32,.7)'" type="primary" block @click="nextQuestion">{{nextPage[locale]}}</van-button>
+      <van-button v-if="isEnd" :color="questionData && questionData.css && questionData.css.titleColor ? questionData.css.titleColor : 'rgba(0,50,32,.7)'" type="primary" block @click="postQuestion">{{submit[locale]}}</van-button>
     </div>
   </div>
 </template>
@@ -421,7 +422,7 @@ export default {
 <style lang="less">
 .main-page {
   .main-title{
-    background-color: rgba(255,255,255,0.9);
+    // background-color: rgba(255,255,255,0.9);
     padding: 10px 10px 20px 10px;
     width: 100%;
     color: rgba(0,50,32,.7);

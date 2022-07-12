@@ -19,29 +19,27 @@
     <div v-if="item.type === 'radio'">
       <div v-for="row in item.options" :key="row.id">
         <div v-if="row.img && row.img.length > 0">
-          <van-swipe class="my-swipe" :autoplay="2000">
+          <van-swipe :ref="'mySwipe' + row.id" class="my-swipe">
             <van-swipe-item v-for="(imgUrl, index) in row.img" :key="index">
-              <img  class="img-style" :src="imgUrl" alt="" />
+              <img class="img-style" :src="imgUrl" alt="" />
             </van-swipe-item>
+            <template #indicator>
+              <div @click="prev('mySwipe' + row.id)" class="custom-indicator-left indicator-size"><van-icon name="arrow-left" /></div>
+              <div @click="next('mySwipe' + row.id)" class="custom-indicator-right indicator-size"><van-icon name="arrow" /></div>
+            </template>
           </van-swipe>
           <!-- <img v-for="imgUrl in row.img" class="img-style" :src="imgUrl" alt=""> -->
           <!-- <img class="img-style" v-if="row.img" :src="row.img" alt=""> -->
         </div>
-        <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="round" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">
-          <span class="title">{{row.title}}</span>
-          <br/>
-          <span class="sub-title">{{row.subTitle}}</span>
-        </van-checkbox>
+        <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="round" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
+        <p class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
         <p class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
       </div>
     </div>
     <div v-if="item.type === 'checkbox'">
       <div v-for="row in item.options" :key="row.id">
-        <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="square" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">
-          <span class="title">{{row.title}}</span>
-          <br/>
-          <span class="sub-title">{{row.subTitle}}</span>
-        </van-checkbox>
+        <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="square" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
+        <p class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
         <p class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
       </div>
     </div>
@@ -95,6 +93,12 @@ export default {
   created () {
   },
   methods: {
+    prev (swipe) {
+      this.$refs[swipe] && this.$refs[swipe][0] && this.$refs[swipe][0].prev()
+    },
+    next (swipe) {
+      this.$refs[swipe] && this.$refs[swipe][0] && this.$refs[swipe][0].next()
+    },
   }
 }
 </script>
@@ -256,16 +260,33 @@ export default {
   .sub-title{
     margin: 0;
     padding: 0;
+    font-size: 14px;
+    color: #888;
+    padding-left: 28px;
   }
   .title{
     margin: 0;
     padding: 0;
   }
+  .custom-indicator-left{
+    position: absolute;
+    top: calc(~'50% - 20px');
+    left: 0;
+  }
+  .custom-indicator-right{
+    position: absolute;
+    top: calc(~'50% - 20px');
+    right: 0;
+  }
+  .indicator-size{
+    font-size: 30px;
+    color: #fff;
+  }
   .my-swipe{
-    width: 260px;
+    width: 100%;
     .img-style{
       display: block;
-      width: 260px;
+      width: 100%;
       height: auto;
       margin-bottom: 10px;
     }

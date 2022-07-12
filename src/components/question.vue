@@ -1,7 +1,7 @@
 <template>
-  <div class="main-body" :class="isNotFilled ? 'not-filled' : ''" v-if="item">
-    <p class="q-title"><span v-if="item.required" style="color:red">*</span>{{item.title}}<span v-if="type !== false">{{typeList[item.type][locale]}}</span></p>
-    <div v-if="item.type === 'text'">
+  <div ref="question" class="main-body" :class="isNotFilled ? 'not-filled' : ''" v-if="item">
+    <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="q-title"><span v-if="item.required" style="color:red">*</span>{{item.title}}<span v-if="type !== false">{{typeList[item.type][locale]}}</span></p>
+    <div v-if="item.type === 'text' && !item.subType">
       <div class="q-o-children" v-if="item.options && item.options.length">
         <div class="c-item" v-for="row in item.options" :key="row.id">
           <p class="c-item-title">{{row.title}}</p>
@@ -21,39 +21,44 @@
       <van-radio-group @change="changeFill" v-model="item.radio" v-if="item.options && item.options.length">
         <div v-for="row in item.options" :key="row.id">
           <div v-if="row.img && row.img.length > 0">
-          <van-swipe class="my-swipe">
+          <van-swipe :ref="'mySwipe' + row.id" class="my-swipe">
             <van-swipe-item v-for="(imgUrl, index) in row.img" :key="index">
-              <img  class="img-style" :src="imgUrl" alt="" />
+              <img class="img-style" :src="imgUrl" alt="" />
             </van-swipe-item>
+            <template #indicator>
+              <div @click="prev('mySwipe' + row.id)" class="custom-indicator-left indicator-size"><van-icon name="arrow-left" /></div>
+              <div @click="next('mySwipe' + row.id)" class="custom-indicator-right indicator-size"><van-icon name="arrow" /></div>
+            </template>
           </van-swipe>
           </div>
-          <van-radio checked-color="rgba(0,50,32,.7)"  :name="row.id">
-            <span class="title">{{row.title}}</span>
-            <br/>
-            <span class="sub-title">{{row.subTitle}}</span>
-          </van-radio>
+          <van-radio :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" :checked-color="css && css.titleColor ? css.titleColor : 'rgba(0,50,32,.7)'" :name="row.id">{{row.title}}</van-radio>
+          <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
         </div>
       </van-radio-group>
       <input @blur="onBlur" class="radio-input" v-if="radioShowInput" v-model="item.text" type="text">
     </div>
     <div v-if="item.type === 'checkbox'">
       <van-checkbox-group @change="changeFill" v-model="item.checkbox" v-if="item.options && item.options.length">
-        <van-checkbox shape="square" checked-color="rgba(0,50,32,.7)" v-for="row in item.options" :key="row.id" :name="row.id">
-          <span class="title">{{row.title}}</span>
-          <br/>
-          <span class="sub-title">{{row.subTitle}}</span>
-        </van-checkbox>
+        <van-checkbox :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" shape="square" :checked-color="css && css.titleColor ? css.titleColor : 'rgba(0,50,32,.7)'" v-for="row in item.options" :key="row.id" :name="row.id">{{row.title}}</van-checkbox>
+        <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
       </van-checkbox-group>
       <input @blur="onBlur" class="radio-input" v-if="checkBoxShowInput" v-model="item.text" type="text">
+    </div>
+    <div v-if="item.type === 'text' && item.subType === 'selectdialog'">
+      <van-field :style="css && css.titleColor ? 'color:' + css.titleColor + '!important' : 'color:#323233'" v-model="item.text" is-link readonly @click="showCascaderPopup"/>
     </div>
     <div class="error-message" :style="isNotFilled ? 'left: 0' : 'left: 100vw'">
       <van-icon name="clear" color="rgb(255, 64, 64)" size="0.5rem" />
       <span class="message-content">{{errorMessage[item.type][locale]}}</span>
     </div>
+    <van-popup v-model="cascaderPopupVisible" round position="bottom">
+      <van-cascader active-color="rgba(0, 50, 32)" :field-names="filedNames" v-model="cascaderValue" title="请选择所在地区" :options="cascaderOptions" @close="closeCascaderPopup" @finish="cascaderFinish"/>
+    </van-popup>
   </div>
 </template>
 
 <script>
+import * as provinces from '/public/provinces.json'
 
 export default {
   name: 'question',
@@ -69,12 +74,20 @@ export default {
     type: {
       type: Boolean,
       default: () => true
+    },
+    css: {
+      type: Object,
+      default: () => null
     }
   },
   data () {
     return {
+      cascaderPopupVisible: false,
+      cascaderValue: '',
       radioShowInput: false,
       checkBoxShowInput: false,
+      cascaderOptions: provinces.default,
+      filedNames: { text: 'name', value: 'id', children: 'children' },
       isNotFilled: false,
       errorMessage: {
         'checkbox': {
@@ -151,8 +164,36 @@ export default {
       }
       this.checkBoxShowInput = false
     }
+    this.$nextTick(() => {
+      if (this.$refs.question) {
+        const documentArr = this.$refs.question.querySelectorAll('.van-field__control')
+        if (documentArr && documentArr.length > 0) {
+          for (let i = 0; i < documentArr.length; i++) {
+            if (this.css && this.css.titleColor) {
+              documentArr[i].style = 'color:' + this.css.titleColor
+            }
+          }
+        }
+      }
+    })
   },
   methods: {
+    showCascaderPopup () {
+      this.cascaderPopupVisible = true
+    },
+    closeCascaderPopup () {
+      this.cascaderPopupVisible = false
+    },
+    cascaderFinish ({ selectedOptions }) {
+      this.cascaderPopupVisible = false
+      this.$set(this.item, 'text', selectedOptions.map((option) => option.name).join('/'))
+    },
+    prev (swipe) {
+      this.$refs[swipe] && this.$refs[swipe][0] && this.$refs[swipe][0].prev()
+    },
+    next (swipe) {
+      this.$refs[swipe] && this.$refs[swipe][0] && this.$refs[swipe][0].next()
+    },
     onBlur () {
       this.$emit('saveAll')
     },
@@ -367,21 +408,54 @@ export default {
     border: 1px solid #ebebeb;
   }
   .my-swipe{
-    width: 260px;
+    width: 100%;
     .img-style{
       display: block;
-      width: 260px;
+      width: 100%;
       height: auto;
       margin-bottom: 10px;
     }
   }
+  .custom-indicator-left{
+    position: absolute;
+    top: calc(~'50% - 20px');
+    left: 0;
+  }
+  .custom-indicator-right{
+    position: absolute;
+    top: calc(~'50% - 20px');
+    right: 0;
+  }
+  .indicator-size{
+    font-size: 30px;
+    color: #fff;
+  }
   .sub-title{
     margin: 0;
     padding: 0;
+    font-size: 14px;
+    color: #000;
+    padding-left: 28px;
   }
   .title{
     margin: 0;
     padding: 0;
+  }
+  .van-radio__label{
+    color: unset;
+  }
+  .van-cell{
+    background-color: transparent;
+    border-bottom: 1px solid rgba(218, 189, 165, 0.2);
+  }
+  .van-field__label{
+    color: unset;
+  }
+  .van-field__control{
+    color: unset;
+  }
+  .van-cell__right-icon{
+    color: unset;
   }
 }
 .not-filled{
