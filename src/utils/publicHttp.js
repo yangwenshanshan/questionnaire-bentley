@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Toast } from 'vant'
 
 const instance = axios.create({
-  baseURL: ''
+  baseURL: './'
 });
 
 instance.interceptors.request.use((config) => {
