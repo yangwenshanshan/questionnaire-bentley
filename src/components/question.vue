@@ -88,7 +88,7 @@ export default {
       radioShowInput: false,
       checkBoxShowInput: false,
       cascaderOptions: [],
-      filedNames: { text: 'name', value: 'id', children: 'children' },
+      filedNames: { text: 'fullname', value: 'id', children: 'children' },
       isNotFilled: false,
       errorMessage: {
         'checkbox': {
@@ -195,7 +195,7 @@ export default {
     },
     cascaderFinish ({ selectedOptions }) {
       this.cascaderPopupVisible = false
-      this.$set(this.item, 'text', selectedOptions.map((option) => option.name).join('/'))
+      this.$set(this.item, 'text', selectedOptions.map((option) => option.fullname).join('/'))
     },
     prev (swipe) {
       this.$refs[swipe] && this.$refs[swipe][0] && this.$refs[swipe][0].prev()

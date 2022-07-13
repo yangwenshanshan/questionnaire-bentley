@@ -119,6 +119,7 @@ export default {
     }
   },
   mounted () {
+    // this.getPPP()
     api.checkQuestion({
       _locale: this.locale,
       ...this.$route.query
@@ -187,6 +188,28 @@ export default {
     })
   },
   methods: {
+    getPPP () {
+      api.getPPPList().then(res => {
+        const data = res.result
+        let provinces = []
+        data[0].forEach(el => {
+          const title = el.id.substring(0,2)
+          const arr = data[1].filter(ele => ele.id.indexOf(title) === 0)
+          arr.forEach(ele => {
+            const title2 = ele.id.substring(0,4)
+            const arr2 = data[2].filter(elem => elem.id.indexOf(title2) === 0)
+            if (arr2 && arr2.length > 0) {
+              ele.children = arr2
+            }
+          })
+          if (arr && arr.length > 0) {
+            el.children = arr
+          }
+          provinces.push(el)
+        })
+        console.log(JSON.stringify(provinces))
+      })
+    },
     saveAll () {
       localStorage.setItem(`_yws_${this.qId}_question`, JSON.stringify({
         questionData: this.questionData,

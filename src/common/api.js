@@ -6,5 +6,6 @@ export default {
   submitQuestion: (params, data) => http.post(`/wj/api/question/submit?${params}`, data),
   checkQuestion: (params) => http.get(`/wj/api/question/check`, {params: params}),
   getQuestionHistory: (params) => http.get(`/wj/api/question/history`, {params: params}),
-  getProvinceList: () => publicHttp.get('/provinces.json')
+  getProvinceList: () => publicHttp.get('/provinces.json'),
+  getPPPList: () => publicHttp.get('/ppp.json')
 }
