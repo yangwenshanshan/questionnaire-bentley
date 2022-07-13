@@ -1,58 +1,28 @@
 <template>
-  <div class="answer-page" v-if="answerData">
-    <div class="app-top">
+  <div class="answer-page" :style="answerData && answerData.css && answerData.css.backgroundColor ? 'background:' + answerData.css.backgroundColor : ''" v-if="answerData">
+    <div class="app-top" v-if="!answerData.css || !answerData.css.backgroundImage">
       <img src="../../assets/bentley_logo.png" alt="">
     </div>
-    <div class="banner-img" v-if="answerData.cover">
-      <img :src="answerData.cover" alt="">
+    <div class="banner-img" v-if="answerData.cover || (answerData.css && answerData.css.backgroundImage)">
+      <img v-if="answerData.css && answerData.css.backgroundImage" :src="answerData.css.backgroundImage" alt="">
+      <img v-else :src="answerData.cover" alt="">
     </div>
-    <div class="main-title">{{answerData.shortTitle}}</div>
+    <div :style="answerData && answerData.css && answerData.css.titleColor ? 'color:' + answerData.css.titleColor : ''" class="main-title">{{answerData.shortTitle}}</div>
     <div class="answer-list">
       <div v-for="item in answer">
-        <answerTemplate :item="item" :type="answerData.type"></answerTemplate>
+        <answerTemplate :item="item" :type="answerData.type" :css="answerData.css"></answerTemplate>
         <template v-if="item.children && item.children.length">
           <div v-for="row in item.children" :key="row.id">
-            <answerTemplate :item="row" :type="answerData.type"></answerTemplate>
+            <answerTemplate :item="row" :type="answerData.type" :css="answerData.css"></answerTemplate>
             <template v-if="row.children && row.children.length">
               <div v-for="it in row.children" :key="it.id">
-                <answerTemplate :item="it" :type="answerData.type"></answerTemplate>
+                <answerTemplate :item="it" :type="answerData.type" :css="answerData.css"></answerTemplate>
               </div>
             </template>
           </div>
         </template>
       </div>
-      <!-- <div class="answer-item" >
-        <p class="q-title"><span v-if="item.required" style="color:red">*</span>{{item.title}}<span>{{typeList[item.type][locale]}}</span></p>
-        <div v-if="item.type === 'text'">
-          <div class="q-o-children" v-if="item.options && item.options.length">
-            <div class="c-item" v-for="row in item.options" :key="row.id">
-              <p class="c-item-title">{{row.title}}</p>
-              <div class="c-input-list">
-                <div class="input-main" v-for="it in row.length" :key="it">
-                  <span class="input-title">{{it}}.{{row.text[it - 1]}}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div v-else>
-            <p class="disable-span">{{item.text}}</p>
-          </div>
-        </div>
-        <div v-if="item.type === 'radio'">
-          <div v-for="row in item.options" :key="row.id">
-            <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="round" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
-            <p class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
-          </div>
-        </div>
-        <div v-if="item.type === 'checkbox'">
-          <div v-for="row in item.options" :key="row.id">
-            <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="square" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
-            <p class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
-          </div>
-        </div>
-      </div> -->
     </div>
-      <!-- answer -->
   </div>
 </template>
 
@@ -134,7 +104,6 @@ export default {
   min-height: 100vh;
   background: #fff;
   .main-title{
-    background-color: rgba(255,255,255,0.9);
     padding: 10px 10px 20px 10px;
     width: 100%;
     color: rgba(0,50,32,.7);

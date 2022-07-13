@@ -1,21 +1,22 @@
 <template>
-  <div class="result-page" v-if="result">
+  <div class="result-page" :style="answerData && answerData.css && answerData.css.backgroundColor ? 'background:' + answerData.css.backgroundColor : ''" v-if="result && answerData">
     <!-- <div class="result-top"></div> -->
-    <div class="app-top">
+    <div class="app-top"  v-if="!answerData.css || !answerData.css.backgroundImage">
       <img src="../../assets/bentley_logo.png" alt="">
     </div>
-    <div class="banner-img" v-if="result.data.cover">
-      <img :src="result.data.cover" alt="">
+    <div class="banner-img" v-if="answerData.cover || (answerData.css && answerData.css.backgroundImage)">
+      <img v-if="answerData.css && answerData.css.backgroundImage" :src="answerData.css.backgroundImage" alt="">
+      <img v-else :src="answerData.cover" alt="">
     </div>
     <!-- <div class="main-title">{{result.data.shortTitle}}</div> -->
     <div class="result-main">
       <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
-      <p>{{result.msg}}</p>
-      <p v-if="result.data.score">{{result.data.right}}/{{result.data.total}}</p>
+      <p :style="answerData && answerData.css && answerData.css.titleColor ? 'color:' + answerData.css.titleColor : ''">{{result.msg}}</p>
+      <p :style="answerData && answerData.css && answerData.css.titleColor ? 'color:' + answerData.css.titleColor : ''" v-if="result.data.score">{{result.data.right}}/{{result.data.total}}</p>
     </div>
     <div class="result-top"></div>
     <div class="result-main" style="padding:0" v-if="result.data.done">
-      <van-button color="rgba(0,50,32,.7)" type="primary" block @click="goAnswer">{{result.data.shortTitle}}{{nextPage[locale]}}</van-button>
+      <van-button :color="answerData && answerData.css && answerData.css.titleColor ? answerData.css.titleColor : 'rgba(0,50,32,.7)'" type="primary" block @click="goAnswer">{{result.data.shortTitle}}{{nextPage[locale]}}</van-button>
     </div>
   </div>
 </template>
@@ -25,6 +26,7 @@ export default {
   data () {
     return {
       result: null,
+      answerData: null,
       locale: 'zh_CN',
       msg: {
         'zh_CN': '您的答卷已经提交，感谢您的参与！',
@@ -46,6 +48,7 @@ export default {
     }
     if (result) {
       this.result = JSON.parse(result)
+      this.answerData = this.result.data
       document.title = this.result.data.title
       sessionStorage.removeItem('_yws_result')
       // if (this.result.data.score) {
@@ -122,7 +125,7 @@ export default {
     text-align: center;
     padding: 30px 0 26px;
     margin: 0 14px;
-    background: #fff;
+    // background: #fff;
     font-size: 16px;
     color: #333;
     margin-top: 30px;

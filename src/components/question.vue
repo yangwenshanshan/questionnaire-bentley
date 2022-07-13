@@ -1,6 +1,7 @@
 <template>
   <div ref="question" class="main-body" :class="isNotFilled ? 'not-filled' : ''" v-if="item">
     <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="q-title"><span v-if="item.required" style="color:red">*</span>{{item.title}}<span v-if="type !== false">{{typeList[item.type][locale]}}</span></p>
+    <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="item.subTitle" v-html="item.subTitle"></p>
     <div v-if="item.type === 'text' && !item.subType">
       <div class="q-o-children" v-if="item.options && item.options.length">
         <div class="c-item" v-for="row in item.options" :key="row.id">
@@ -58,7 +59,7 @@
 </template>
 
 <script>
-import * as provinces from '/public/provinces.json'
+import api from '@/common/api'
 
 export default {
   name: 'question',
@@ -86,7 +87,7 @@ export default {
       cascaderValue: '',
       radioShowInput: false,
       checkBoxShowInput: false,
-      cascaderOptions: provinces.default,
+      cascaderOptions: [],
       filedNames: { text: 'name', value: 'id', children: 'children' },
       isNotFilled: false,
       errorMessage: {
@@ -146,6 +147,9 @@ export default {
     },
   },
   mounted () {
+    if (this.item.type === 'text' && this.item.subType === 'selectdialog') {
+      this.getProvinceList()
+    }
     if (this.item.type === 'radio') {
       let item = this.item.options.find(it => it.id === this.item.radio)
       if (item && item.type === 'other') {
@@ -178,6 +182,11 @@ export default {
     })
   },
   methods: {
+    getProvinceList () {
+      api.getProvinceList().then(res => {
+        this.cascaderOptions = res
+      })
+    },
     showCascaderPopup () {
       this.cascaderPopupVisible = true
     },
@@ -436,6 +445,7 @@ export default {
     font-size: 14px;
     color: #000;
     padding-left: 28px;
+    margin-bottom: 10px;
   }
   .title{
     margin: 0;

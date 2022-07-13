@@ -1,6 +1,7 @@
 <template>
   <div class="answer-item" v-if="item">
-    <p class="q-title"><span v-if="item.required" style="color:red">*</span>{{item.title}}<span v-if="type !== false">{{typeList[item.type][locale]}}</span></p>
+    <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="q-title"><span v-if="item.required" style="color:red">*</span>{{item.title}}<span v-if="type !== false">{{typeList[item.type][locale]}}</span></p>
+    <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="item.subTitle" v-html="item.subTitle"></p>
     <div v-if="item.type === 'text'">
       <div class="q-o-children" v-if="item.options && item.options.length">
         <div class="c-item" v-for="row in item.options" :key="row.id">
@@ -13,7 +14,7 @@
         </div>
       </div>
       <div v-else>
-        <p class="disable-span">{{item.text}}</p>
+        <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="disable-span">{{item.text}}</p>
       </div>
     </div>
     <div v-if="item.type === 'radio'">
@@ -31,16 +32,16 @@
           <!-- <img v-for="imgUrl in row.img" class="img-style" :src="imgUrl" alt=""> -->
           <!-- <img class="img-style" v-if="row.img" :src="row.img" alt=""> -->
         </div>
-        <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="round" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
-        <p class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
-        <p class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
+        <van-checkbox :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="round" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
+        <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
+        <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
       </div>
     </div>
     <div v-if="item.type === 'checkbox'">
       <div v-for="row in item.options" :key="row.id">
-        <van-checkbox :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="square" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
-        <p class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
-        <p class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
+        <van-checkbox :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="square" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
+        <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
+        <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
       </div>
     </div>
   </div>
@@ -58,6 +59,10 @@ export default {
     type: {
       type: Boolean,
       default: () => true
+    },
+    css: {
+      type: Object,
+      default: () => null
     }
   },
   data () {
@@ -108,7 +113,7 @@ export default {
   min-height: 100vh;
   background: #fff;
   .main-title{
-    background-color: rgba(255,255,255,0.9);
+    // background-color: rgba(255,255,255,0.9);
     padding: 10px 10px 20px 10px;
     width: 100%;
     color: rgba(0,50,32,.7);
@@ -261,8 +266,9 @@ export default {
     margin: 0;
     padding: 0;
     font-size: 14px;
-    color: #888;
+    color: #c8c9cc;
     padding-left: 28px;
+    margin-bottom: 10px;
   }
   .title{
     margin: 0;
@@ -290,6 +296,25 @@ export default {
       height: auto;
       margin-bottom: 10px;
     }
+  }
+  .van-radio__label{
+    color: unset;
+  }
+  .van-checkbox__label{
+    color: unset;
+  }
+  .van-cell{
+    background-color: transparent;
+    border-bottom: 1px solid rgba(218, 189, 165, 0.2);
+  }
+  .van-field__label{
+    color: unset;
+  }
+  .van-field__control{
+    color: unset;
+  }
+  .van-cell__right-icon{
+    color: unset;
   }
 }
 </style>
