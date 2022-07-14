@@ -18,6 +18,9 @@
         <textarea @blur="onBlur" @input="inputFill" rows="3" class="textarea" v-model="item.text"></textarea>
       </div>
     </div>
+    <div v-if="item.type === 'text' && item.subType === 'input'">
+      <input @blur="onBlur" @input="inputFill" class="my-input" type="text" v-model="item.text">
+    </div>
     <div v-if="item.type === 'radio'">
       <van-radio-group @change="changeFill" v-model="item.radio" v-if="item.options && item.options.length">
         <div v-for="row in item.options" :key="row.id">
@@ -32,8 +35,8 @@
               </template>
             </van-swipe>
           </div>
-          <van-radio :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" :checked-color="css && css.titleColor ? css.titleColor : 'rgba(0,50,32,.7)'" :name="row.id">{{row.title}}</van-radio>
           <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
+          <van-radio :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" :checked-color="css && css.titleColor ? css.titleColor : 'rgba(0,50,32,.7)'" :name="row.id">{{row.title}}</van-radio>
         </div>
       </van-radio-group>
       <input @blur="onBlur" class="radio-input" v-if="radioShowInput" v-model="item.text" type="text">
@@ -52,8 +55,8 @@
               </template>
             </van-swipe>
           </div>
-          <van-checkbox :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" shape="square" :checked-color="css && css.titleColor ? css.titleColor : 'rgba(0,50,32,.7)'" :name="row.id">{{row.title}}</van-checkbox>
           <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
+          <van-checkbox :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" shape="square" :checked-color="css && css.titleColor ? css.titleColor : 'rgba(0,50,32,.7)'" :name="row.id">{{row.title}}</van-checkbox>
         </div>
       </van-checkbox-group>
       <input @blur="onBlur" class="radio-input" v-if="checkBoxShowInput" v-model="item.text" type="text">
@@ -414,6 +417,16 @@ export default {
     border-radius: 4px;
     border: solid 1px #e0e0e0;
   }
+  .my-input{
+    resize: none;
+    color: #262626;
+    font-size: 14px;
+    padding: 8px;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 4px;
+    border: solid 1px #e0e0e0;
+  }
   .van-radio-group{
     .van-radio{
       margin-bottom: 10px;
@@ -457,11 +470,11 @@ export default {
   }
   .my-swipe{
     width: 100%;
+    margin-bottom: 10px;
     .img-style{
       display: block;
       width: 100%;
       height: auto;
-      margin-bottom: 10px;
       transform: scale(0.98);
     }
   }

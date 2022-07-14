@@ -30,8 +30,8 @@
             </template>
           </van-swipe>
         </div>
-        <van-checkbox :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="round" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
         <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
+        <van-checkbox :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="round" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
         <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
       </div>
     </div>
@@ -48,8 +48,8 @@
             </template>
           </van-swipe>
         </div>
-        <van-checkbox :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="square" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
         <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
+        <van-checkbox :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="square" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
         <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
       </div>
     </div>
