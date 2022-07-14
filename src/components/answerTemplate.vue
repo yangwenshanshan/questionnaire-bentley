@@ -18,7 +18,7 @@
       </div>
     </div>
     <div v-if="item.type === 'radio'">
-      <div v-for="row in item.options" :key="row.id">
+      <div :class="row.img && row.img.length > 0 ? 'group-item' : ''" v-for="row in item.options" :key="row.id">
         <div v-if="row.img && row.img.length > 0">
           <van-swipe :ref="'mySwipe' + row.id" class="my-swipe">
             <van-swipe-item v-for="(imgUrl, index) in row.img" :key="index">
@@ -36,7 +36,7 @@
       </div>
     </div>
     <div v-if="item.type === 'checkbox'">
-      <div v-for="row in item.options" :key="row.id">
+      <div :class="row.img && row.img.length > 0 ? 'group-item' : ''" v-for="row in item.options" :key="row.id">
         <div v-if="row.img && row.img.length > 0">
           <van-swipe :ref="'mySwipe' + row.id" class="my-swipe">
             <van-swipe-item v-for="(imgUrl, index) in row.img" :key="index">
@@ -268,6 +268,12 @@ export default {
   .right-red{
     .van-checkbox__label--disabled{
       color: #ee0a24;
+    }
+  }
+  .group-item{
+    margin-bottom: 40px;
+    &:last-of-type{
+      margin-bottom: 0;
     }
   }
   .disable-span{

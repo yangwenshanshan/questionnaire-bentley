@@ -23,7 +23,7 @@
     </div>
     <div v-if="item.type === 'radio'">
       <van-radio-group @change="changeFill" v-model="item.radio" v-if="item.options && item.options.length">
-        <div v-for="row in item.options" :key="row.id">
+        <div :class="row.img && row.img.length > 0 ? 'group-item' : ''" v-for="row in item.options" :key="row.id">
           <div v-if="row.img && row.img.length > 0">
             <van-swipe :ref="'mySwipe' + row.id" class="my-swipe">
               <van-swipe-item v-for="(imgUrl, index) in row.img" :key="index">
@@ -43,7 +43,7 @@
     </div>
     <div v-if="item.type === 'checkbox'">
       <van-checkbox-group @change="changeFill" v-model="item.checkbox" v-if="item.options && item.options.length">
-        <div  v-for="row in item.options" :key="row.id">
+        <div :class="row.img && row.img.length > 0 ? 'group-item' : ''" v-for="row in item.options" :key="row.id">
           <div v-if="row.img && row.img.length > 0">
             <van-swipe :ref="'mySwipe' + row.id" class="my-swipe">
               <van-swipe-item v-for="(imgUrl, index) in row.img" :key="index">
@@ -476,6 +476,12 @@ export default {
       width: 100%;
       height: auto;
       transform: scale(0.98);
+    }
+  }
+  .group-item{
+    margin-bottom: 40px;
+    &:last-of-type{
+      margin-bottom: 0;
     }
   }
   .custom-indicator-left{
