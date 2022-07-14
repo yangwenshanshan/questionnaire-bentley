@@ -40,8 +40,10 @@
     </div>
     <div v-if="item.type === 'checkbox'">
       <van-checkbox-group @change="changeFill" v-model="item.checkbox" v-if="item.options && item.options.length">
-        <van-checkbox :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" shape="square" :checked-color="css && css.titleColor ? css.titleColor : 'rgba(0,50,32,.7)'" v-for="row in item.options" :key="row.id" :name="row.id">{{row.title}}</van-checkbox>
-        <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
+        <div  v-for="row in item.options" :key="row.id">
+          <van-checkbox :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" shape="square" :checked-color="css && css.titleColor ? css.titleColor : 'rgba(0,50,32,.7)'" :name="row.id">{{row.title}}</van-checkbox>
+          <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
+        </div>
       </van-checkbox-group>
       <input @blur="onBlur" class="radio-input" v-if="checkBoxShowInput" v-model="item.text" type="text">
     </div>
@@ -411,6 +413,7 @@ export default {
       margin-bottom: 10px;
       .van-checkbox__label{
         font-size: 16px;
+        color: unset;
       }
     }
   }
