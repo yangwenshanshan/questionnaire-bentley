@@ -1,5 +1,5 @@
 <template>
-  <div class="answer-item" v-if="item">
+  <div ref="answer" class="answer-item" v-if="item">
     <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="q-title"><span v-if="item.required" style="color:red">*</span>{{item.title}}<span v-if="type !== false">{{typeList[item.type][locale]}}</span></p>
     <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="item.subTitle" v-html="item.subTitle"></p>
     <div v-if="item.type === 'text'">
@@ -96,6 +96,34 @@ export default {
     }
   },
   created () {
+  },
+  mounted () {
+    // const qTitle = this.$refs.question.querySelectorAll('.q-title')
+    // const width = qTitle[0].offsetWidth
+    // this.width = width - 1
+    // this.$nextTick(() => {
+    //   if (this.$refs.answer) {
+    //     const qTitle = this.$refs.answer.querySelectorAll('.q-title')
+    //     const mySwipe = this.$refs.answer.querySelectorAll('.my-swipe')
+    //     const width = qTitle[0].offsetWidth
+    //     for (let i = 0; i < mySwipe.length; i++) {
+    //       mySwipe[i].style = `width: ${width - 5}px`
+    //     }
+    //   }
+      
+    //   // this.$nextTick(() => {
+    //   //   this.item.options.forEach(el => {
+    //   //     if (this.$refs['mySwipe' + el.id]) {
+    //   //       const element = this.$refs['mySwipe' + el.id][0]
+    //   //       const swipeItems = element.$el.querySelectorAll('.van-swipe-item')
+    //   //       for (let i = 0; i < swipeItems.length; i++) {
+    //   //         let px = swipeItems[i].style.width
+    //   //         swipeItems[i].style.width = parseInt(px.split('px')[0]) + 0.02 +'px'
+    //   //       }
+    //   //     }
+    //   //   })
+    //   // })
+    // })
   },
   methods: {
     prev (swipe) {
@@ -295,6 +323,7 @@ export default {
       width: 100%;
       height: auto;
       margin-bottom: 10px;
+      transform: scale(0.98);
     }
   }
   .van-radio__label{

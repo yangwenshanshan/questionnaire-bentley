@@ -147,6 +147,9 @@ export default {
     },
   },
   mounted () {
+    // const qTitle = this.$refs.question.querySelectorAll('.q-title')
+    // const width = qTitle[0].offsetWidth
+    // this.width = width - 1
     if (this.item.type === 'text' && this.item.subType === 'selectdialog') {
       this.getProvinceList()
     }
@@ -171,6 +174,12 @@ export default {
     this.$nextTick(() => {
       if (this.$refs.question) {
         const documentArr = this.$refs.question.querySelectorAll('.van-field__control')
+        // const qTitle = this.$refs.question.querySelectorAll('.q-title')
+        // const mySwipe = this.$refs.question.querySelectorAll('.my-swipe')
+        // const width = qTitle[0].offsetWidth
+        // for (let i = 0; i < mySwipe.length; i++) {
+        //   mySwipe[i].style = `width: ${width - 5}px`
+        // }
         if (documentArr && documentArr.length > 0) {
           for (let i = 0; i < documentArr.length; i++) {
             if (this.css && this.css.titleColor) {
@@ -179,6 +188,19 @@ export default {
           }
         }
       }
+      
+      // this.$nextTick(() => {
+      //   this.item.options.forEach(el => {
+      //     if (this.$refs['mySwipe' + el.id]) {
+      //       const element = this.$refs['mySwipe' + el.id][0]
+      //       const swipeItems = element.$el.querySelectorAll('.van-swipe-item')
+      //       for (let i = 0; i < swipeItems.length; i++) {
+      //         let px = swipeItems[i].style.width
+      //         swipeItems[i].style.width = parseInt(px.split('px')[0]) + 0.02 +'px'
+      //       }
+      //     }
+      //   })
+      // })
     })
   },
   methods: {
@@ -423,6 +445,7 @@ export default {
       width: 100%;
       height: auto;
       margin-bottom: 10px;
+      transform: scale(0.98);
     }
   }
   .custom-indicator-left{
