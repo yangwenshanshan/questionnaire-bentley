@@ -22,15 +22,15 @@
       <van-radio-group @change="changeFill" v-model="item.radio" v-if="item.options && item.options.length">
         <div v-for="row in item.options" :key="row.id">
           <div v-if="row.img && row.img.length > 0">
-          <van-swipe :ref="'mySwipe' + row.id" class="my-swipe">
-            <van-swipe-item v-for="(imgUrl, index) in row.img" :key="index">
-              <img class="img-style" :src="imgUrl" alt="" />
-            </van-swipe-item>
-            <template #indicator>
-              <div @click="prev('mySwipe' + row.id)" class="custom-indicator-left indicator-size"><van-icon name="arrow-left" /></div>
-              <div @click="next('mySwipe' + row.id)" class="custom-indicator-right indicator-size"><van-icon name="arrow" /></div>
-            </template>
-          </van-swipe>
+            <van-swipe :ref="'mySwipe' + row.id" class="my-swipe">
+              <van-swipe-item v-for="(imgUrl, index) in row.img" :key="index">
+                <img class="img-style" :src="imgUrl" alt="" />
+              </van-swipe-item>
+              <template #indicator>
+                <div @click="prev('mySwipe' + row.id)" class="custom-indicator-left indicator-size"><van-icon name="arrow-left" /></div>
+                <div @click="next('mySwipe' + row.id)" class="custom-indicator-right indicator-size"><van-icon name="arrow" /></div>
+              </template>
+            </van-swipe>
           </div>
           <van-radio :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" :checked-color="css && css.titleColor ? css.titleColor : 'rgba(0,50,32,.7)'" :name="row.id">{{row.title}}</van-radio>
           <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
@@ -41,6 +41,17 @@
     <div v-if="item.type === 'checkbox'">
       <van-checkbox-group @change="changeFill" v-model="item.checkbox" v-if="item.options && item.options.length">
         <div  v-for="row in item.options" :key="row.id">
+          <div v-if="row.img && row.img.length > 0">
+            <van-swipe :ref="'mySwipe' + row.id" class="my-swipe">
+              <van-swipe-item v-for="(imgUrl, index) in row.img" :key="index">
+                <img class="img-style" :src="imgUrl" alt="" />
+              </van-swipe-item>
+              <template #indicator>
+                <div @click="prev('mySwipe' + row.id)" class="custom-indicator-left indicator-size"><van-icon name="arrow-left" /></div>
+                <div @click="next('mySwipe' + row.id)" class="custom-indicator-right indicator-size"><van-icon name="arrow" /></div>
+              </template>
+            </van-swipe>
+          </div>
           <van-checkbox :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" shape="square" :checked-color="css && css.titleColor ? css.titleColor : 'rgba(0,50,32,.7)'" :name="row.id">{{row.title}}</van-checkbox>
           <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="row.subTitle" v-html="row.subTitle"></p>
         </div>
@@ -268,13 +279,16 @@ export default {
         }
       }
       if (this.item.type === 'checkbox') {
-        if (this.item.checkbox && this.item.checkbox.length) {
+        if (this.item.checkbox && this.item.checkbox.length && this.item.checkbox.length >= this.item.minLength) {
           params.id = this.item.id
           params.checkbox = this.item.checkbox,
           params.type = 'checkbox'
           params.text = this.item.text ? this.item.text : ''
           this.isNotFilled = false
           return params
+        } else if (this.item.checkbox && this.item.checkbox.length && this.item.checkbox.length < this.item.minLength) {
+          this.isNotFilled = true
+          return false
         } else if (!this.item.required) {
           params.id = this.item.id
           params.checkbox = ''
@@ -470,7 +484,7 @@ export default {
     padding: 0;
     font-size: 14px;
     color: #000;
-    padding-left: 28px;
+    // padding-left: 28px;
     margin-bottom: 10px;
   }
   .title{
