@@ -65,7 +65,7 @@
       <van-field :style="css && css.titleColor ? 'color:' + css.titleColor + '!important' : 'color:#323233'" v-model="item.text" is-link readonly @click="showCascaderPopup"/>
     </div>
     <div v-if="item.type === 'radio' && item.subType === 'select'">
-      <van-field :style="css && css.titleColor ? 'color:' + css.titleColor + '!important' : 'color:#323233'" :value="tempText" is-link readonly @click="showCascaderClothes"/>
+      <van-field :style="css && css.titleColor ? 'color:' + css.titleColor + '!important' : 'color:#323233'" :value="tempText ? tempText : '请选择'" is-link readonly @click="showCascaderClothes"/>
     </div>
     <div class="error-message" :style="isNotFilled ? 'left: 0' : 'left: 100vw'">
       <van-icon name="clear" color="rgb(255, 64, 64)" size="0.5rem" />
@@ -76,7 +76,7 @@
     </van-popup>
 
     <van-popup v-model="cascaderClothesVisible" round position="bottom">
-      <van-cascader active-color="rgba(0, 50, 32)" :field-names="filedClothesNames" v-model="cascaderClothesValue" title="请选择所在地区" :options="cascaderClothesOptions" @close="closeCascaderClothes" @finish="cascaderClothesFinish"/>
+      <van-cascader active-color="rgba(0, 50, 32)" :field-names="filedClothesNames" v-model="cascaderClothesValue" :title="item.title" :options="cascaderClothesOptions" @close="closeCascaderClothes" @finish="cascaderClothesFinish"/>
     </van-popup>
   </div>
 </template>
