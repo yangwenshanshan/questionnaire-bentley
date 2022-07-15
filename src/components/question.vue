@@ -62,7 +62,7 @@
       <input @blur="onBlur" class="radio-input" v-if="checkBoxShowInput" v-model="item.text" type="text">
     </div>
     <div v-if="item.type === 'text' && item.subType === 'selectdialog'">
-      <van-field :style="css && css.titleColor ? 'color:' + css.titleColor + '!important' : 'color:#323233'" v-model="item.text" is-link readonly @click="showCascaderPopup"/>
+      <van-field :style="css && css.titleColor ? 'color:' + css.titleColor + '!important' : 'color:#323233'" :value="provinceText ? provinceText : '请选择'" is-link readonly @click="showCascaderPopup"/>
     </div>
     <div v-if="item.type === 'radio' && item.subType === 'select'">
       <van-field :style="css && css.titleColor ? 'color:' + css.titleColor + '!important' : 'color:#323233'" :value="tempText ? tempText : '请选择'" is-link readonly @click="showCascaderClothes"/>
@@ -113,6 +113,7 @@ export default {
       radioShowInput: false,
       checkBoxShowInput: false,
       tempText: '',
+      provinceText: '',
       cascaderOptions: [],
       cascaderClothesOptions: [],
       filedNames: { text: 'fullname', value: 'id', children: 'children' },
@@ -177,6 +178,9 @@ export default {
   mounted () {
     if (this.item.type === 'text' && this.item.subType === 'selectdialog') {
       this.getProvinceList()
+      if (this.item.text) {
+        this.provinceText = this.item.text
+      }
     }
     if (this.item.type === 'radio' && this.item.subType === 'select') {
       this.cascaderClothesOptions = this.item.options
@@ -237,6 +241,7 @@ export default {
     cascaderFinish ({ selectedOptions }) {
       this.cascaderPopupVisible = false
       this.$set(this.item, 'text', selectedOptions.map((option) => option.fullname).join('/'))
+      this.provinceText = this.item.text
       this.changeFill()
     },
     cascaderClothesFinish ({ selectedOptions }) {
