@@ -17,7 +17,7 @@
         <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="disable-span">{{item.text}}</p>
       </div>
     </div>
-    <div v-if="item.type === 'radio'">
+    <div v-if="item.type === 'radio' && !item.subType">
       <div :class="row.img && row.img.length > 0 ? 'group-item' : ''" v-for="row in item.options" :key="row.id">
         <div v-if="row.img && row.img.length > 0">
           <van-swipe :ref="'mySwipe' + row.id" class="my-swipe">
@@ -34,6 +34,9 @@
         <van-checkbox :style="css && css.titleColor ? 'color:' + css.titleColor : 'color:#323233'" :class="row.right ? row.checked ? 'right-green' : 'right-red' : ''" disabled shape="round" v-model="row.checked" checked-color="rgba(0,50,32,.7)" :name="row.id">{{row.title}}</van-checkbox>
         <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="disable-span" v-if="row.text && row.checked">{{row.text}}</p>
       </div>
+    </div>
+    <div v-if="item.type === 'radio' && item.subType === 'select'">
+      <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="disable-span">{{tempText}}</p>
     </div>
     <div v-if="item.type === 'checkbox'">
       <div :class="row.img && row.img.length > 0 ? 'group-item' : ''" v-for="row in item.options" :key="row.id">
@@ -76,6 +79,7 @@ export default {
   },
   data () {
     return {
+      tempText: '',
       result: null,
       locale: 'zh_CN',
       answer: [],
@@ -107,32 +111,10 @@ export default {
   created () {
   },
   mounted () {
-    // const qTitle = this.$refs.question.querySelectorAll('.q-title')
-    // const width = qTitle[0].offsetWidth
-    // this.width = width - 1
-    // this.$nextTick(() => {
-    //   if (this.$refs.answer) {
-    //     const qTitle = this.$refs.answer.querySelectorAll('.q-title')
-    //     const mySwipe = this.$refs.answer.querySelectorAll('.my-swipe')
-    //     const width = qTitle[0].offsetWidth
-    //     for (let i = 0; i < mySwipe.length; i++) {
-    //       mySwipe[i].style = `width: ${width - 5}px`
-    //     }
-    //   }
-      
-    //   // this.$nextTick(() => {
-    //   //   this.item.options.forEach(el => {
-    //   //     if (this.$refs['mySwipe' + el.id]) {
-    //   //       const element = this.$refs['mySwipe' + el.id][0]
-    //   //       const swipeItems = element.$el.querySelectorAll('.van-swipe-item')
-    //   //       for (let i = 0; i < swipeItems.length; i++) {
-    //   //         let px = swipeItems[i].style.width
-    //   //         swipeItems[i].style.width = parseInt(px.split('px')[0]) + 0.02 +'px'
-    //   //       }
-    //   //     }
-    //   //   })
-    //   // })
-    // })
+    if (this.item.type === 'radio' && this.item.subType === 'select') {
+      const temp = this.item.options.find(el => el.checked)
+      temp && (this.tempText = temp.title)
+    }
   },
   methods: {
     prev (swipe) {

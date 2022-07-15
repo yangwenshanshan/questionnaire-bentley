@@ -383,12 +383,14 @@ export default {
         }
       }
       if (item.type === 'checkbox') {
-        if (item.checkbox && item.checkbox.length) {
+        if (item.checkbox && item.checkbox.length && item.checkbox.length >= item.minLength) {
           params.id = item.id
           params.checkbox = item.checkbox,
           params.type = 'checkbox'
           params.text = item.text ? item.text : ''
           return params
+        } else if (item.checkbox && item.checkbox.length && item.checkbox.length < item.minLength) {
+          return false
         } else if (!item.required) {
           params.id = item.id
           params.checkbox = ''

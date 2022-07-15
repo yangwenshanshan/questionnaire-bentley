@@ -21,7 +21,7 @@
     <div v-if="item.type === 'text' && item.subType === 'input'">
       <input @blur="onBlur" @input="inputFill" class="my-input" type="text" v-model="item.text">
     </div>
-    <div v-if="item.type === 'radio'">
+    <div v-if="item.type === 'radio' && !item.subType">
       <van-radio-group @change="changeFill" v-model="item.radio" v-if="item.options && item.options.length">
         <div :class="row.img && row.img.length > 0 ? 'group-item' : ''" v-for="row in item.options" :key="row.id">
           <div v-if="row.img && row.img.length > 0">
@@ -64,12 +64,19 @@
     <div v-if="item.type === 'text' && item.subType === 'selectdialog'">
       <van-field :style="css && css.titleColor ? 'color:' + css.titleColor + '!important' : 'color:#323233'" v-model="item.text" is-link readonly @click="showCascaderPopup"/>
     </div>
+    <div v-if="item.type === 'radio' && item.subType === 'select'">
+      <van-field :style="css && css.titleColor ? 'color:' + css.titleColor + '!important' : 'color:#323233'" :value="tempText" is-link readonly @click="showCascaderClothes"/>
+    </div>
     <div class="error-message" :style="isNotFilled ? 'left: 0' : 'left: 100vw'">
       <van-icon name="clear" color="rgb(255, 64, 64)" size="0.5rem" />
       <span class="message-content">{{errorMessage[item.type][locale]}}</span>
     </div>
     <van-popup v-model="cascaderPopupVisible" round position="bottom">
       <van-cascader active-color="rgba(0, 50, 32)" :field-names="filedNames" v-model="cascaderValue" title="请选择所在地区" :options="cascaderOptions" @close="closeCascaderPopup" @finish="cascaderFinish"/>
+    </van-popup>
+
+    <van-popup v-model="cascaderClothesVisible" round position="bottom">
+      <van-cascader active-color="rgba(0, 50, 32)" :field-names="filedClothesNames" v-model="cascaderClothesValue" title="请选择所在地区" :options="cascaderClothesOptions" @close="closeCascaderClothes" @finish="cascaderClothesFinish"/>
     </van-popup>
   </div>
 </template>
@@ -100,11 +107,16 @@ export default {
   data () {
     return {
       cascaderPopupVisible: false,
+      cascaderClothesVisible: false,
+      cascaderClothesValue: '',
       cascaderValue: '',
       radioShowInput: false,
       checkBoxShowInput: false,
+      tempText: '',
       cascaderOptions: [],
+      cascaderClothesOptions: [],
       filedNames: { text: 'fullname', value: 'id', children: 'children' },
+      filedClothesNames: { text: 'title', value: 'id', children: 'children' },
       isNotFilled: false,
       errorMessage: {
         'checkbox': {
@@ -163,13 +175,17 @@ export default {
     },
   },
   mounted () {
-    // const qTitle = this.$refs.question.querySelectorAll('.q-title')
-    // const width = qTitle[0].offsetWidth
-    // this.width = width - 1
     if (this.item.type === 'text' && this.item.subType === 'selectdialog') {
       this.getProvinceList()
     }
-    if (this.item.type === 'radio') {
+    if (this.item.type === 'radio' && this.item.subType === 'select') {
+      this.cascaderClothesOptions = this.item.options
+      if (this.item.radio) {
+        const temp = this.cascaderClothesOptions.find(el => parseInt(el.id) === parseInt(this.item.radio))
+        temp && (this.tempText = temp.title)
+      }
+    }
+    if (this.item.type === 'radio' && !this.item.subType) {
       let item = this.item.options.find(it => it.id === this.item.radio)
       if (item && item.type === 'other') {
         this.radioShowInput = true
@@ -190,12 +206,6 @@ export default {
     this.$nextTick(() => {
       if (this.$refs.question) {
         const documentArr = this.$refs.question.querySelectorAll('.van-field__control')
-        // const qTitle = this.$refs.question.querySelectorAll('.q-title')
-        // const mySwipe = this.$refs.question.querySelectorAll('.my-swipe')
-        // const width = qTitle[0].offsetWidth
-        // for (let i = 0; i < mySwipe.length; i++) {
-        //   mySwipe[i].style = `width: ${width - 5}px`
-        // }
         if (documentArr && documentArr.length > 0) {
           for (let i = 0; i < documentArr.length; i++) {
             if (this.css && this.css.titleColor) {
@@ -204,19 +214,6 @@ export default {
           }
         }
       }
-      
-      // this.$nextTick(() => {
-      //   this.item.options.forEach(el => {
-      //     if (this.$refs['mySwipe' + el.id]) {
-      //       const element = this.$refs['mySwipe' + el.id][0]
-      //       const swipeItems = element.$el.querySelectorAll('.van-swipe-item')
-      //       for (let i = 0; i < swipeItems.length; i++) {
-      //         let px = swipeItems[i].style.width
-      //         swipeItems[i].style.width = parseInt(px.split('px')[0]) + 0.02 +'px'
-      //       }
-      //     }
-      //   })
-      // })
     })
   },
   methods: {
@@ -228,12 +225,25 @@ export default {
     showCascaderPopup () {
       this.cascaderPopupVisible = true
     },
+    showCascaderClothes () {
+      this.cascaderClothesVisible = true
+    },
     closeCascaderPopup () {
       this.cascaderPopupVisible = false
+    },
+    closeCascaderClothes () {
+      this.cascaderClothesVisible = false
     },
     cascaderFinish ({ selectedOptions }) {
       this.cascaderPopupVisible = false
       this.$set(this.item, 'text', selectedOptions.map((option) => option.fullname).join('/'))
+      this.changeFill()
+    },
+    cascaderClothesFinish ({ selectedOptions }) {
+      this.cascaderClothesVisible = false
+      this.tempText = selectedOptions.map((option) => option.title).join('/')
+      this.$set(this.item, 'radio', parseInt(selectedOptions.map((option) => option.id).join('')))
+      this.changeFill()
     },
     prev (swipe) {
       this.$refs[swipe] && this.$refs[swipe][0] && this.$refs[swipe][0].prev()
