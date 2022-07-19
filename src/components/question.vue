@@ -62,17 +62,17 @@
       <input @blur="onBlur" class="radio-input" v-if="checkBoxShowInput" v-model="item.text" type="text">
     </div>
     <div v-if="item.type === 'text' && item.subType === 'selectdialog'">
-      <van-field :style="css && css.titleColor ? 'color:' + css.titleColor + '!important' : 'color:#323233'" :value="provinceText ? provinceText : '请选择'" is-link readonly @click="showCascaderPopup"/>
+      <van-field :style="css && css.titleColor ? 'color:' + css.titleColor + '!important' : 'color:#323233'" :value="provinceText ? provinceText : pleaseChoose[locale]" is-link readonly @click="showCascaderPopup"/>
     </div>
     <div v-if="item.type === 'radio' && item.subType === 'select'">
-      <van-field :style="css && css.titleColor ? 'color:' + css.titleColor + '!important' : 'color:#323233'" :value="tempText ? tempText : '请选择'" is-link readonly @click="showCascaderClothes"/>
+      <van-field :style="css && css.titleColor ? 'color:' + css.titleColor + '!important' : 'color:#323233'" :value="tempText ? tempText : pleaseChoose[locale]" is-link readonly @click="showCascaderClothes"/>
     </div>
     <div class="error-message" :style="isNotFilled ? 'left: 0' : 'left: 100vw'">
       <van-icon name="clear" color="rgb(255, 64, 64)" size="0.5rem" />
       <span class="message-content">{{errorMessage[item.type][locale]}}</span>
     </div>
     <van-popup v-model="cascaderPopupVisible" round position="bottom">
-      <van-cascader active-color="rgba(0, 50, 32)" :field-names="filedNames" v-model="cascaderValue" title="请选择所在地区" :options="cascaderOptions" @close="closeCascaderPopup" @finish="cascaderFinish"/>
+      <van-cascader active-color="rgba(0, 50, 32)" :field-names="filedNames" v-model="cascaderValue" :title="item.title" :options="cascaderOptions" @close="closeCascaderPopup" @finish="cascaderFinish"/>
     </van-popup>
 
     <van-popup v-model="cascaderClothesVisible" round position="bottom">
@@ -119,6 +119,10 @@ export default {
       filedNames: { text: 'fullname', value: 'id', children: 'children' },
       filedClothesNames: { text: 'title', value: 'id', children: 'children' },
       isNotFilled: false,
+      pleaseChoose: {
+        'zh_CN': '请选择',
+        'zh_HK': '請選擇',
+      },
       errorMessage: {
         'checkbox': {
           'zh_CN': '请选择内容',
@@ -222,7 +226,9 @@ export default {
   },
   methods: {
     getProvinceList () {
-      api.getProvinceList().then(res => {
+      api.getProvinceList({
+        locale: this.locale
+      }).then(res => {
         this.cascaderOptions = res
       })
     },
