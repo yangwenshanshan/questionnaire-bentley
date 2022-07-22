@@ -20,6 +20,14 @@ const router = new Router({
     path: '/answer',
     name: 'answer',
     component: () => import('@/views/main/answer.vue')
+  }, {
+    path: '/rankList',
+    name: 'rankList',
+    component: () => import('@/views/rankList/index.vue')
+  }, {
+    path: '/managerList',
+    name: 'managerList',
+    component: () => import('@/views/managerList/index.vue')
   }]
 });
 
