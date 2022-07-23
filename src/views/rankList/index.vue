@@ -8,8 +8,10 @@
       <img v-else :src="rankData.cover" alt="">
     </div>
     <div class="main-title" :style="rankData && rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">{{rankData.title}}</div>
-    <div class="rank-list">
-      <div class="rank-item rank-me" v-if="rankData.my">
+    <!-- <div class="main-title" style="color:#fff">{{rankData.title}}</div> -->
+    <!-- <div class="rank-list" style="margin-top:0" v-if="rankData.my">
+      <div class="rank-item" style="padding-bottom: 0">
+        <p class="item-num" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">{{rankData.my.rank}}</p>
         <div class="item-img" :style="rankData.css && rankData.css.titleColor ? 'background:' + rankData.css.titleColor : ''">
           <img :src="rankData.my.headImgUrl ? rankData.host + rankData.my.headImgUrl : ''" alt="">
         </div>
@@ -17,27 +19,49 @@
           <p class="info-name">{{rankData.my.surname}} {{rankData.my.firstName}}</p>
           <p class="info-dealer">{{rankData.my.dealerName}}</p>
         </div>
+        <p class="item-point" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">{{rankData.my.point}}</p>
       </div>
-      <div class="rank-me-info">
-        <div class="info-item" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">
-          <p class="item-title">我的分数</p>
-          <p class="item-point"><span>{{rankData.my.point}}</span><span>分</span></p>
+    </div> -->
+    <div class="rank-list">
+      <div class="rank-item-top" :style="rankData.css && rankData.css.titleColor ? 'border: 1px dashed ' + rankData.css.titleColor : 'border: 1px dashed #fff;'">
+        <div class="rank-item rank-me" v-if="rankData.my">
+          <div class="item-img" :style="rankData.css && rankData.css.titleColor ? 'background:' + rankData.css.titleColor : ''">
+            <img :src="rankData.my.headImgUrl ? rankData.host + rankData.my.headImgUrl : ''" alt="">
+          </div>
+          <div class="item-info" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">
+            <p class="info-name">{{rankData.my.surname}} {{rankData.my.firstName}}</p>
+            <p class="info-dealer">{{rankData.my.dealerName}}</p>
+          </div>
         </div>
-        <div class="info-item" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">
-          <p class="item-title">我的排名</p>
-          <p class="item-point">{{rankData.my.rank}}</p>
+        <div class="rank-me-info">
+          <div class="info-item" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">
+            <p class="item-title">我的分数</p>
+            <p class="item-point"><span class="point-number">{{rankData.my.point}}</span><span>分</span></p>
+          </div>
+          <div class="item-line" :style="rankData.css && rankData.css.titleColor ? 'background:' + rankData.css.titleColor : ''"></div>
+          <div class="info-item" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">
+            <p class="item-title">我的排名</p>
+            <p class="item-point"><span class="point-number">{{rankData.my.rank}}</span></p>
+          </div>
         </div>
+      </div>
+      <div class="list-title">
+        <!-- <p :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor + ';border-bottom: 1px dashed ' + rankData.css.titleColor : ''" class="title-main">Top <span class="title-number">{{top}}</span></p> -->
+        <p class="title-main">Top <span class="title-number">{{top}}</span></p>
       </div>
       <div class="rank-item" v-for="item in rankData.top" :key="item.id">
-        <p class="item-num" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">{{item.rank}}</p>
+        <!-- <p class="item-num" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">{{item.rank}}</p> -->
+        <p class="item-num" style="color:#fff">{{item.rank}}</p>
         <div class="item-img" :style="rankData.css && rankData.css.titleColor ? 'background:' + rankData.css.titleColor : ''">
           <img :src="item.headImgUrl ? rankData.host + item.headImgUrl : ''" alt="">
         </div>
-        <div class="item-info" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">
+        <!-- <div class="item-info" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''"> -->
+        <div class="item-info" style="color:#fff">
           <p class="info-name">{{item.surname}} {{item.firstName}}</p>
           <p class="info-dealer">{{item.dealerName}}</p>
         </div>
-        <p class="item-point" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">{{item.point}}</p>
+        <!-- <p class="item-point" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''"><span class="point-number">{{item.point}}</span>分</p> -->
+        <p class="item-point" style="color:#fff"><span class="point-number">{{item.point}}</span>分</p>
       </div>
     </div>
   </div>
@@ -47,10 +71,12 @@
 import api from '@/common/api'
 export default {
   mounted () {
+    this.top = this.$route.query.top
     this.getBoardTop()
   },
   data () {
     return {
+      top: '',
       rankData: null,
       locale: 'zh_CN',
     }
@@ -119,20 +145,28 @@ export default {
   }
   .rank-list{
     padding: 0 20px;
+    // padding: 10px 16px;
+    // margin: 20px 20px 0 20px;
+    // box-shadow: 0px 0px 6px #fff;
+    .rank-item-top{
+      padding: 10px 20px 0 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
     .rank-item{
       color: #fff;
       display: flex;
       font-size: 14px;
       align-items: center;
-      padding-bottom: 20px;
+      padding: 0 13px 30px 13px;
       .item-num{
         font-size: 20px;
         text-align: center;
         margin: 0 20px 0 0;
       }
       .item-img{
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         overflow: hidden;
         border-radius: 50%;
         background: #fff;
@@ -158,10 +192,23 @@ export default {
       }
       .item-point{
         margin: 0;
+        font-size: 14px;
+        .point-number{
+          font-size: 28px;
+        }
       }
     }
     .rank-me{
       padding: 0;
+      .item-info{
+        .info-name{
+          font-size: 24px;
+          line-height: 1.2;
+        }
+        .info-dealer{
+          font-size: 16px;
+        }
+      }
     }
   }
   .rank-me-info{
@@ -170,12 +217,15 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border: 1px dashed #fff;
     border-radius: 6px;
     padding: 5px;
-    margin: 10px 0;
+    margin-top: 10px;
     p{
       margin: 0;
+    }
+    .item-line{
+      width: 1px;
+      height: 30px;
     }
     .info-item{
       flex: 1;
@@ -184,9 +234,22 @@ export default {
       justify-content: center;
       flex-direction: column;
       .item-point{
-        font-size: 20px;
+        font-size: 14px;
+        .point-number{
+          font-size: 32px;
+        }
       }
       .item-title{
+      }
+    }
+  }
+  .list-title{
+    margin-bottom: 20px;
+    .title-main{
+      text-align: center;
+      color: #fff;
+      border-bottom: 1px dashed #fff;
+      .title-number{
 
       }
     }
