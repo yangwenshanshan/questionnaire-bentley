@@ -23,7 +23,7 @@
       </div>
     </div> -->
     <div class="rank-list">
-      <div class="rank-item-top" :style="rankData.css && rankData.css.titleColor ? 'border: 1px dashed ' + rankData.css.titleColor : 'border: 1px dashed #fff;'">
+      <div class="rank-item-top" :style="rankData.css && rankData.css.titleColor ? 'border: 1px solid ' + rankData.css.titleColor : 'border: 1px solid #fff;'">
         <div class="rank-item rank-me" v-if="rankData.my">
           <div class="item-img" :style="rankData.css && rankData.css.titleColor ? 'background:' + rankData.css.titleColor : ''">
             <img :src="rankData.my.headImgUrl ? rankData.host + rankData.my.headImgUrl : ''" alt="">
@@ -38,7 +38,7 @@
             <p class="item-title">我的分数</p>
             <p class="item-point"><span class="point-number">{{rankData.my.point}}</span><span>分</span></p>
           </div>
-          <div class="item-line" :style="rankData.css && rankData.css.titleColor ? 'background:' + rankData.css.titleColor : ''"></div>
+          <!-- <div class="item-line" :style="rankData.css && rankData.css.titleColor ? 'background:' + rankData.css.titleColor : ''"></div> -->
           <div class="info-item" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">
             <p class="item-title">我的排名</p>
             <p class="item-point"><span class="point-number">{{rankData.my.rank}}</span></p>
@@ -47,7 +47,7 @@
       </div>
       <div class="list-title">
         <!-- <p :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor + ';border-bottom: 1px dashed ' + rankData.css.titleColor : ''" class="title-main">Top <span class="title-number">{{top}}</span></p> -->
-        <p class="title-main">Top <span class="title-number">{{top}}</span></p>
+        <p class="title-main">最佳勇士TOP<span class="title-number">{{top}}</span></p>
       </div>
       <div class="rank-item" v-for="item in rankData.top" :key="item.id">
         <!-- <p class="item-num" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">{{item.rank}}</p> -->
@@ -89,6 +89,7 @@ export default {
       }).then(res => {
         if (res.code === 0) {
           this.rankData = res.data
+          document.title = this.rankData.title
         }
       })
     },
@@ -149,9 +150,9 @@ export default {
     // margin: 20px 20px 0 20px;
     // box-shadow: 0px 0px 6px #fff;
     .rank-item-top{
-      padding: 10px 20px 0 20px;
+      padding: 25px 25px 10px 25px;
       border-radius: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 40px;
     }
     .rank-item{
       color: #fff;
@@ -218,8 +219,8 @@ export default {
     align-items: center;
     justify-content: space-between;
     border-radius: 6px;
-    padding: 5px;
-    margin-top: 10px;
+    padding: 5px 35px;
+    margin-top: 25px;
     p{
       margin: 0;
     }
@@ -228,15 +229,17 @@ export default {
       height: 30px;
     }
     .info-item{
-      flex: 1;
+      // flex: 1;
       display: flex;
-      align-items: center;
+      // align-items: center;
       justify-content: center;
       flex-direction: column;
       .item-point{
         font-size: 14px;
+        line-height: 1.2;
         .point-number{
           font-size: 32px;
+          margin-right: 20px;
         }
       }
       .item-title{
@@ -249,6 +252,8 @@ export default {
       text-align: center;
       color: #fff;
       border-bottom: 1px dashed #fff;
+      font-size: 18px;
+      margin-bottom: 30px;
       .title-number{
 
       }

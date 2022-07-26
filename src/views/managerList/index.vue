@@ -15,7 +15,7 @@
           <p class="info-dealer">{{item.dealerName}}</p>
         </div>
         <div>
-          <van-uploader :after-read="(file) => afterRead(file, item)" accept="image/*" capture="camera">
+          <van-uploader :after-read="(file) => afterRead(file, item)" accept="image/*">
             <img class="uploader-icon" src="../../assets/camera.png" alt="">
             <!-- <van-button icon="plus" type="primary">拍照</van-button> -->
           </van-uploader>
@@ -40,6 +40,9 @@ import { VueCropper }  from 'vue-cropper'
 export default {
   components: {
     VueCropper
+  },
+  created () {
+    document.title = '积分排行榜'
   },
   mounted () {
     Toast.allowMultiple()
