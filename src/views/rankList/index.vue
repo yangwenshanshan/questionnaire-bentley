@@ -47,7 +47,7 @@
       </div>
       <div class="list-title">
         <!-- <p :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor + ';border-bottom: 1px dashed ' + rankData.css.titleColor : ''" class="title-main">Top <span class="title-number">{{top}}</span></p> -->
-        <p class="title-main">最佳勇士TOP<span class="title-number">{{top}}</span></p>
+        <p class="title-main">最佳总经理TOP<span class="title-number">{{top}}</span></p>
       </div>
       <div class="rank-item" v-for="item in rankData.top" :key="item.id">
         <!-- <p class="item-num" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">{{item.rank}}</p> -->
