@@ -13,7 +13,7 @@
       <div class="rank-item" style="padding-bottom: 0">
         <p class="item-num" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">{{rankData.my.rank}}</p>
         <div class="item-img" :style="rankData.css && rankData.css.titleColor ? 'background:' + rankData.css.titleColor : ''">
-          <img :src="rankData.my.headImgUrl ? rankData.host + rankData.my.headImgUrl : ''" alt="">
+          <img class="img-author" :src="rankData.my.headImgUrl ? rankData.host + rankData.my.headImgUrl : ''" alt="">
         </div>
         <div class="item-info" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">
           <p class="info-name">{{rankData.my.surname}} {{rankData.my.firstName}}</p>
@@ -24,45 +24,48 @@
     </div> -->
     <div class="rank-list">
       <div class="rank-item-top" :style="rankData.css && rankData.css.titleColor ? 'border: 1px solid ' + rankData.css.titleColor : 'border: 1px solid #fff;'">
-        <div class="rank-item rank-me" v-if="rankData.my">
+        <div class="rank-item rank-me">
           <div class="item-img" :style="rankData.css && rankData.css.titleColor ? 'background:' + rankData.css.titleColor : ''">
-            <img :src="rankData.my.headImgUrl ? rankData.host + rankData.my.headImgUrl : ''" alt="">
+            <img class="img-author" :src="rankData.user && rankData.user.headImgUrl ? rankData.host + rankData.user.headImgUrl : ''" alt="">
           </div>
           <div class="item-info" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">
-            <p class="info-name">{{rankData.my.surname}} {{rankData.my.firstName}}</p>
-            <p class="info-dealer">{{rankData.my.dealerName}}</p>
+            <p class="info-name">{{rankData.user && rankData.user.surname ? rankData.user.surname : ''}} {{rankData.user && rankData.user.firstName ? rankData.user.firstName : ''}}</p>
+            <p class="info-dealer">{{rankData.user && rankData.user.dealerName ? rankData.user.dealerName : ''}}</p>
           </div>
         </div>
         <div class="rank-me-info">
           <div class="info-item" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">
-            <p class="item-title">我的分数</p>
-            <p class="item-point"><span class="point-number">{{rankData.my.point}}</span><span>分</span></p>
+            <p class="item-title">{{myScore[locale]}}</p>
+            <p class="item-point"><span class="point-number">{{rankData.my ? rankData.my.point : '0'}}</span><span>分</span></p>
           </div>
           <!-- <div class="item-line" :style="rankData.css && rankData.css.titleColor ? 'background:' + rankData.css.titleColor : ''"></div> -->
           <div class="info-item" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">
-            <p class="item-title">我的排名</p>
-            <p class="item-point"><span class="point-number">{{rankData.my.rank}}</span></p>
+            <p class="item-title">{{myRanking[locale]}}</p>
+            <p class="item-point"><span class="point-number">{{rankData.my ? rankData.my.rank : '--'}}</span></p>
           </div>
         </div>
       </div>
-      <div class="list-title">
-        <!-- <p :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor + ';border-bottom: 1px dashed ' + rankData.css.titleColor : ''" class="title-main">Top <span class="title-number">{{top}}</span></p> -->
-        <p class="title-main">最佳总经理TOP<span class="title-number">{{top}}</span></p>
-      </div>
-      <div class="rank-item" v-for="item in rankData.top" :key="item.id">
-        <!-- <p class="item-num" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">{{item.rank}}</p> -->
-        <p class="item-num" style="color:#fff">{{item.rank}}</p>
-        <div class="item-img" :style="rankData.css && rankData.css.titleColor ? 'background:' + rankData.css.titleColor : ''">
-          <img :src="item.headImgUrl ? rankData.host + item.headImgUrl : ''" alt="">
+      <template v-if="rankData.top && rankData.top.length">
+        <div class="list-title">
+          <!-- <p :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor + ';border-bottom: 1px dashed ' + rankData.css.titleColor : ''" class="title-main">Top <span class="title-number">{{top}}</span></p> -->
+          <p class="title-main">{{bestManager[locale]}}TOP<span class="title-number">{{top}}</span></p>
         </div>
-        <!-- <div class="item-info" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''"> -->
-        <div class="item-info" style="color:#fff">
-          <p class="info-name">{{item.surname}} {{item.firstName}}</p>
-          <p class="info-dealer">{{item.dealerName}}</p>
+        <div class="rank-item" v-for="item in rankData.top" :key="item.id">
+          <!-- <p class="item-num" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''">{{item.rank}}</p> -->
+          <p class="item-num" style="color:#fff">{{item.rank}}</p>
+          <div class="item-img" :style="rankData.css && rankData.css.titleColor ? 'background:' + rankData.css.titleColor : ''">
+            <img v-if="item.rank <= 5" class="img-price" src="../../assets/price.png" alt="">
+            <img class="img-author" :src="item.headImgUrl ? rankData.host + item.headImgUrl : ''" alt="">
+          </div>
+          <!-- <div class="item-info" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''"> -->
+          <div class="item-info" style="color:#fff">
+            <p class="info-name">{{item.surname}} {{item.firstName}}</p>
+            <p class="info-dealer">{{item.dealerName}}</p>
+          </div>
+          <!-- <p class="item-point" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''"><span class="point-number">{{item.point}}</span>分</p> -->
+          <p class="item-point" style="color:#fff"><span class="point-number">{{item.point}}</span>分</p>
         </div>
-        <!-- <p class="item-point" :style="rankData.css && rankData.css.titleColor ? 'color:' + rankData.css.titleColor : ''"><span class="point-number">{{item.point}}</span>分</p> -->
-        <p class="item-point" style="color:#fff"><span class="point-number">{{item.point}}</span>分</p>
-      </div>
+      </template>
     </div>
   </div>
 </template>
@@ -72,6 +75,10 @@ import api from '@/common/api'
 export default {
   mounted () {
     this.top = this.$route.query.top
+    const { _locale } = this.$route.query
+    if (_locale) {
+      this.locale = _locale
+    }
     this.getBoardTop()
   },
   data () {
@@ -79,6 +86,21 @@ export default {
       top: '',
       rankData: null,
       locale: 'zh_CN',
+      myScore: {
+        'zh_CN': '我的分数',
+        'zh_HK': '我的分數',
+        'en_US': 'my score'
+      },
+      myRanking: {
+        'zh_CN': '我的排名',
+        'zh_HK': '我的排名',
+        'en_US': 'my ranking'
+      },
+      bestManager: {
+        'zh_CN': '最佳总经理',
+        'zh_HK': '最佳總經理',
+        'en_US': 'best general manager'
+      },
     }
   },
   methods: {
@@ -164,19 +186,29 @@ export default {
         font-size: 20px;
         text-align: center;
         margin: 0 20px 0 0;
+        width: 22px;
       }
       .item-img{
         width: 50px;
         height: 50px;
-        overflow: hidden;
+        // overflow: hidden;
         border-radius: 50%;
         background: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
-        img{
+        position: relative;
+        .img-author{
           width: 100%;
           object-fit: contain;
+          border-radius: 50%;
+        }
+        .img-price{
+          position: absolute;
+          top: -5px;
+          left: -5px;
+          width: 58px;
+          height: 58px;
         }
       }
       .item-info{
