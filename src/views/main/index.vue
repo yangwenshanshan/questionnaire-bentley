@@ -1,6 +1,6 @@
 <template>
   <div ref="mainPage" class="main-page" :style="questionData && questionData.css && questionData.css.backgroundColor ? 'background:' + questionData.css.backgroundColor : ''" v-if="questionData">
-    <div class="app-top" v-if="!questionData.css || !questionData.css.backgroundImage">
+    <div :class="countDownTime >= 0 ? 'app-top-count-down' : ''" class="app-top" v-if="!questionData.css || !questionData.css.backgroundImage">
       <img src="../../assets/bentley_logo.png" alt="">
       <!-- <van-popover
         v-model="showPopover"
@@ -14,11 +14,16 @@
         </template>
       </van-popover> -->
     </div>
+    <div class="count-down-time-2" v-if="countDownTime >= 0">
+      <img class="time-icon" src="../../assets/count-down.png" alt="">
+      <p class="time-main"> {{ showTimeText }}</p>
+    </div>
     <div class="banner-img" v-if="questionData.cover || (questionData.css && questionData.css.backgroundImage)">
       <img v-if="questionData.css && questionData.css.backgroundImage" :src="questionData.css.backgroundImage" alt="">
       <img v-else :src="questionData.cover" alt="">
     </div>
     <div class="main-title" :style="questionData && questionData.css && questionData.css.titleColor ? 'color:' + questionData.css.titleColor : ''">{{questionData.shortTitle}}</div>
+    
     <div v-for="item in list" :key="item.id">
       <question @saveAll="saveAll" ref="question" :item="item" :locale="locale" :type="questionData.type" :css="questionData.css"></question>
       <template v-if="item.optionId === item.radio && item.children && item.children.length">
@@ -35,7 +40,7 @@
     <div class="footer-btns" >
       <van-button v-if="page > 1" class="btn-item" :color="questionData && questionData.css && questionData.css.titleColor ? questionData.css.titleColor : 'rgba(0,50,32,.7)'" plain block @click="lastQuestion">{{previousPage[locale]}}</van-button>
       <van-button v-if="!isEnd" :color="questionData && questionData.css && questionData.css.titleColor ? questionData.css.titleColor : 'rgba(0,50,32,.7)'" type="primary" block @click="nextQuestion">{{nextPage[locale]}}</van-button>
-      <van-button v-if="isEnd" :color="questionData && questionData.css && questionData.css.titleColor ? questionData.css.titleColor : 'rgba(0,50,32,.7)'" type="primary" block @click="postQuestion">{{submit[locale]}}</van-button>
+      <van-button v-if="isEnd" :color="questionData && questionData.css && questionData.css.titleColor ? questionData.css.titleColor : 'rgba(0,50,32,.7)'" type="primary" block @click="postQuestion" :disabled="disabledBtn">{{submit[locale]}}</van-button>
     </div>
   </div>
 </template>
@@ -52,6 +57,9 @@ export default {
   },
   data () {
     return {
+      showTimeText: '',
+      disabledBtn: false,
+      countDownTime: -1,
       locale: 'zh_CN',
       questionList: [],
       questionData: null,
@@ -119,7 +127,6 @@ export default {
     }
   },
   mounted () {
-    // this.getPPP()
     api.checkQuestion({
       _locale: this.locale,
       ...this.$route.query
@@ -158,6 +165,11 @@ export default {
             this.locale = locale
             this.actions = []
             document.title = this.questionData.title
+            if (this.questionData.time) {
+              this.countDownTime = this.questionData.time
+              this.showTimeText = this.fomateDate(this.countDownTime)
+              this.runTime(this.questionData.time)
+            }
             this.items = []
             for (let i = 0; i <= this.questionList.length; i++) {
               if (this.questionList[i]) {
@@ -188,35 +200,15 @@ export default {
     })
   },
   methods: {
-    getPPP () {
-      api.getPPPList().then(res => {
-        const data = res.result
-        let provinces = []
-        data[0].forEach(el => {
-          const title = el.id.substring(0,2)
-          const arr = data[1].filter(ele => ele.id.indexOf(title) === 0)
-          arr.forEach(ele => {
-            const title2 = ele.id.substring(0,4)
-            const arr2 = data[2].filter(elem => elem.id.indexOf(title2) === 0)
-            if (arr2 && arr2.length > 0) {
-              ele.children = arr2
-            }
-          })
-          if (arr && arr.length > 0) {
-            el.children = arr
-          }
-          provinces.push(el)
-        })
-        console.log(JSON.stringify(provinces))
-      })
-    },
     saveAll () {
-      localStorage.setItem(`_yws_${this.qId}_question`, JSON.stringify({
-        questionData: this.questionData,
-        time: new Date().getTime(),
-        locale: this.locale,
-        page: this.page
-      }))
+      if (!this.questionData.time) {
+        localStorage.setItem(`_yws_${this.qId}_question`, JSON.stringify({
+          questionData: this.questionData,
+          time: new Date().getTime(),
+          locale: this.locale,
+          page: this.page
+        }))
+      }
     },
     popoverSelect (item) {
       this.locale = item.locale
@@ -256,10 +248,40 @@ export default {
           if (changeFlag) {
             Toast(this.languageChange[this.locale])
           }
+          if (this.questionData.time) {
+            this.countDownTime = this.questionData.time
+            this.runTime(this.questionData.time)
+            this.showTimeText = this.fomateDate(this.countDownTime)
+          }
         }
       }).catch(() => {
         Toast.clear()
       })
+    },
+    runTime (time) {
+      setTimeout(() => {
+        if (this.countDownTime > 0) {
+          this.countDownTime = time - 1
+          this.showTimeText = this.fomateDate(this.countDownTime)
+          this.runTime(this.countDownTime)
+        } else {
+          Toast('答题超时')
+          this.disabledBtn = true
+        }
+      }, 1000)
+    },
+    fomateDate (time) {
+      let h = parseInt(time / 60 / 60 % 24)
+      h = h < 10 ? '0' + h : h
+      let m = parseInt(time / 60 % 60)
+      m = m < 10 ? '0' + m : m
+      let s = parseInt(time % 60)
+      s = s < 10 ? '0' + s : s
+      let result = ''
+      // if (h > 0) {
+        result = `${h}:`
+      // }
+      return result + `${m}:${s}`
     },
     initParams (qv) {
       let items = []
@@ -481,11 +503,50 @@ export default {
       margin: 0;
     }
   }
+  .app-top-count-down{
+    padding-top: 25px;
+  }
   .banner-img{
     width: 100%;
     img{
       width: 100%;
       height: auto;
+    }
+  }
+  .count-down-time{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #fff;
+    width: 80px;
+    z-index: 100;
+    text-align: center;
+    box-shadow: 0 0 3px #000;
+    border-radius: 5px;
+    .time-main{
+      font-size: 20px;
+    }
+  }
+  .count-down-time-2{
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    width: 100%;
+    z-index: 100;
+    background: #fff;
+    text-align: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .time-icon{
+      width: 20px;
+      height: 20px;
+      margin-right: 5px;
+    }
+    .time-main{
+      font-size: 18px;
+      margin-top: 5px;
     }
   }
 }

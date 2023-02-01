@@ -12,10 +12,11 @@
     <div class="result-main">
       <van-icon class="success-icon" size="1rem" color="rgb(73,203,21)" name="checked" />
       <p :style="answerData && answerData.css && answerData.css.titleColor ? 'color:' + answerData.css.titleColor : ''">{{result.msg}}</p>
-      <p :style="answerData && answerData.css && answerData.css.titleColor ? 'color:' + answerData.css.titleColor : ''" v-if="result.data.score">{{result.data.right}}/{{result.data.total}}</p>
+      <p :style="answerData && answerData.css && answerData.css.titleColor ? 'color:' + answerData.css.titleColor : ''" v-if="result.data.score">{{result.data.rightScore}}/{{result.data.totalScore}}</p>
+      <p :style="answerData && answerData.css && answerData.css.titleColor ? 'color:' + answerData.css.titleColor : ''" v-else>{{result.data.right}}/{{result.data.total}}</p>
     </div>
     <div class="result-top"></div>
-    <div class="result-main" style="padding:0" v-if="result.data.done">
+    <div class="result-main" style="padding:0" v-if="result.data.done && !result.data.score">
       <van-button :color="answerData && answerData.css && answerData.css.titleColor ? answerData.css.titleColor : 'rgba(0,50,32,.7)'" type="primary" block @click="goAnswer">{{result.data.shortTitle}}{{nextPage[locale]}}</van-button>
     </div>
   </div>

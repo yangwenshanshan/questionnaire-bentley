@@ -4,7 +4,7 @@
     <div class="banner-img">
       <img src="../../assets/q1.jpg" alt="">
     </div>
-    <div class="manager-list">
+    <div class="manager-list" v-show="!vueCropperImg">
       <div class="manager-item" v-for="item in managerData.list" :key="item.id">
         <!-- <p class="item-num" >{{item.rank}}</p> -->
         <div class="item-img">
@@ -55,12 +55,16 @@ export default {
       uploadData: null,
       vueCropperImg: null,
       fileName: '',
-      activeItem: null
+      activeItem: null,
+      scrollHeight: 0
     }
   },
   methods: {
     clearImg () {
       this.vueCropperImg = null
+      this.$nextTick(() => {
+        window.scrollTo(0, this.scrollHeight)
+      })
     },
     base64ImgtoFile(dataurl, filename) { 
       let arr = dataurl.split(',')
@@ -90,6 +94,9 @@ export default {
             this.activeItem && this.updateHeadImg({
               url: res.data.url,
               hubId:  this.activeItem.hubId
+            })
+            this.$nextTick(() => {
+              window.scrollTo(0, this.scrollHeight)
             })
           } else {
             this.hideLoading()
@@ -137,6 +144,7 @@ export default {
       })
     },
     afterRead (file, item) {
+      this.scrollHeight = window.scrollY
       this.fileName = file.file.name
       this.vueCropperImg = file.content
       this.activeItem = item
