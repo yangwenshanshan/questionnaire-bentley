@@ -1,6 +1,6 @@
 <template>
   <div ref="answer" class="answer-item" v-if="item">
-    <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="q-title"><span v-if="item.required" style="color:red">*<span v-if="type !== false">{{typeList[item.type][locale]}}</span></span>{{item.title}}</p>
+    <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="q-title"><span v-if="item.required" style="color:red">*</span><span v-if="type !== false">{{customObj.num}}.{{typeList[item.type][locale]}}</span>{{ customObj.title }}</p>
     <p :style="css && css.titleColor ? 'color:' + css.titleColor : ''" class="sub-title" v-if="item.subTitle" v-html="item.subTitle"></p>
     <div v-if="item.type === 'text'">
       <div class="q-o-children" v-if="item.options && item.options.length">
@@ -75,6 +75,25 @@ export default {
     css: {
       type: Object,
       default: () => null
+    }
+  },
+  computed: {
+    customObj () {
+      const arr = this.item.title.split('.')
+      let tempTitle = ''
+      arr.forEach((el, index) => {
+        if (index > 0) {
+          if (!tempTitle) {
+            tempTitle = el
+          } else {
+            tempTitle = tempTitle + '.' + el
+          }
+        }
+      })
+      return {
+        num: arr[0],
+        title: tempTitle
+      }
     }
   },
   data () {
