@@ -23,6 +23,7 @@
       <img v-else :src="questionData.cover" alt="">
     </div>
     <div class="main-title" :style="questionData && questionData.css && questionData.css.titleColor ? 'color:' + questionData.css.titleColor : ''">{{questionData.shortTitle}}</div>
+    <div class="main-sub-title">{{ questionData.subTitle }}</div>
     
     <div v-for="item in list" :key="item.id">
       <question @saveAll="saveAll" ref="question" :item="item" :locale="locale" :type="questionData.type" :css="questionData.css"></question>
@@ -39,8 +40,8 @@
     </div>
     <div class="footer-btns" >
       <van-button v-if="page > 1" class="btn-item" :color="questionData && questionData.css && questionData.css.titleColor ? questionData.css.titleColor : 'rgba(0,50,32,.7)'" plain block @click="lastQuestion">{{previousPage[locale]}}</van-button>
-      <van-button v-if="!isEnd" :color="questionData && questionData.css && questionData.css.titleColor ? questionData.css.titleColor : 'rgba(0,50,32,.7)'" type="primary" block @click="nextQuestion">{{nextPage[locale]}}</van-button>
-      <van-button v-if="isEnd" :color="questionData && questionData.css && questionData.css.titleColor ? questionData.css.titleColor : 'rgba(0,50,32,.7)'" type="primary" block @click="postQuestion" :disabled="disabledBtn">{{submit[locale]}}</van-button>
+      <van-button v-if="!isEnd" :color="questionData && questionData.css && questionData.css.titleColor ? questionData.css.titleColor : 'rgba(0,50,32,.7)'" type="primary" block @click="nextQuestion({ auto: false })">{{nextPage[locale]}}</van-button>
+      <van-button v-if="isEnd" :color="questionData && questionData.css && questionData.css.titleColor ? questionData.css.titleColor : 'rgba(0,50,32,.7)'" type="primary" block @click="postQuestion({ auto: false })" :disabled="disabledBtn">{{submit[locale]}}</van-button>
     </div>
   </div>
 </template>
@@ -265,8 +266,11 @@ export default {
           this.showTimeText = this.fomateDate(this.countDownTime)
           this.runTime(this.countDownTime)
         } else {
-          Toast('答题超时')
+          Toast('答题超时，自动提交')
           this.disabledBtn = true
+          setTimeout(() => {
+            this.postQuestion({ auto: true })
+          }, 2000);
         }
       }, 1000)
     },
@@ -283,11 +287,11 @@ export default {
       // }
       return result + `${m}:${s}`
     },
-    initParams (qv) {
+    initParams (qv, auto) {
       let items = []
       if (qv && qv.length) {
         for (let i = 0; i < qv.length; i++) {
-          let result = qv[i].checkFill()
+          let result = qv[i].checkFill({ auto: auto })
           if (typeof result === 'boolean') {
             if (!result) {
               const top = qv[i].$el.getBoundingClientRect().top
@@ -302,27 +306,27 @@ export default {
       }
       return items
     },
-    nextQuestion () {
+    nextQuestion ({ auto }) {
       let qVues = this.$refs.question
       let subQVues = this.$refs.subQuestion
       let trVues = this.$refs.trQuestion
       let items = []
 
-      let result1 = this.initParams(qVues)
+      let result1 = this.initParams(qVues, auto)
       if (result1) {
         items.push(...result1)
       } else {
         return false
       }
 
-      let result2 = this.initParams(subQVues)
+      let result2 = this.initParams(subQVues, auto)
       if (result2) {
         items.push(...result2)
       } else {
         return false
       }
 
-      let result3 = this.initParams(trVues)
+      let result3 = this.initParams(trVues, auto)
       if (result3) {
         items.push(...result3)
       } else {
@@ -339,8 +343,14 @@ export default {
       this.items.splice(this.items.length - 1, 1)
       this.page--
     },
-    postQuestion () {
-      if (this.nextQuestion() === false) return false
+    postQuestion ({ auto }) {
+      if (auto) {
+        this.nextQuestion({ auto: true })
+      } else {
+        if (this.nextQuestion({ auto: false }) === false) {
+          return false
+        }
+      }
 
       let tempItem = {}
       this.items.forEach(el => {
@@ -359,11 +369,19 @@ export default {
         duration: 0
       })
 
+      let qIds = []
+      this.questionData.items.forEach(el => {
+        qIds.push({
+          id: el.id
+        })
+      })
+
       const params = qs.stringify(this.$route.query)
       api.submitQuestion(params, {
         id: this.questionData.id,
         items: this.items,
         _locale: this.locale,
+        qIds: qIds
       }).then(res => {
         Toast.clear()
         if (res.code === 0) {
@@ -477,6 +495,12 @@ export default {
     font-weight: bold;
     text-align: center;
     font-size: 18px;
+  }
+  .main-sub-title{
+    font-size: 14px;
+    padding: 10px 20px;
+    line-height: 1.5;
+    text-indent: 2em;
   }
   .footer-btns{
     padding: 10px 20px;

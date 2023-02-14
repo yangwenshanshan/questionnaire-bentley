@@ -291,7 +291,7 @@ export default {
     inputFill () {
       this.isNotFilled = false
     },
-    checkFill () {
+    checkFill ({ auto }) {
       let params = {}
       if (this.item.type === 'radio') {
         const radioItem = this.item.options.find(item => item.id === this.item.radio)
@@ -317,8 +317,12 @@ export default {
           this.isNotFilled = false
           return params
         } else {
-          this.isNotFilled = true
-          return false
+          if (auto) {
+            return params
+          } else {
+            this.isNotFilled = true
+            return false
+          }
         }
       }
       if (this.item.type === 'checkbox') {
@@ -339,8 +343,12 @@ export default {
           this.isNotFilled = false
           return params
         } else {
-          this.isNotFilled = true
-          return false
+          if (auto) {
+            return params
+          } else {
+            this.isNotFilled = true
+            return false
+          }
         }
       }
       if (this.item.type === 'text' && (!this.item.options || this.item.options.length <= 0)) {
@@ -357,8 +365,12 @@ export default {
           this.isNotFilled = false
           return params
         } else {
-          this.isNotFilled = true
-          return false
+          if (auto) {
+            return params
+          } else {
+            this.isNotFilled = true
+            return false
+          }
         }
       }
       if (this.item.type === 'text' && this.item.options && this.item.options.length > 0) {
@@ -374,9 +386,11 @@ export default {
               value.push(text)
             }
           }
-          if (value.length < this.item.minLength) {
-            this.isNotFilled = true
-            return false
+          if (!auto) {
+            if (value.length < this.item.minLength) {
+              this.isNotFilled = true
+              return false
+            }
           }
           params.text.push({
             id: options[i].id,
